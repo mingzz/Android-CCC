@@ -4,5 +4,6 @@
     <string name="app_name">C3</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_login">登陆</string>
 
 </resources>

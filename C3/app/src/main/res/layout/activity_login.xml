@@ -1,0 +1,36 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    tools:context="com.ljjqdc.app.c3.login.LoginActivity">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="50dp"
+        android:orientation="vertical">
+        <EditText
+            android:id="@+id/editTextUserName"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="用户名"/>
+        <EditText
+            android:id="@+id/editTextPassword"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="密码"/>
+        <Button
+            android:id="@+id/buttonLogin"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="登陆"/>
+        <Button
+            android:id="@+id/buttonTour"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="游客模式"/>
+    </LinearLayout>
+
+
+</LinearLayout>
