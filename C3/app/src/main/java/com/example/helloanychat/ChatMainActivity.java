@@ -286,7 +286,7 @@ public class ChatMainActivity extends Activity implements AnyChatBaseEvent {
 	public void OnAnyChatLinkCloseMessage(int dwErrorCode) {
 		setBtnVisible(ConfigEntity.showLoginFlag);
 		Toast.makeText(this, "连接关闭，error：" + dwErrorCode, Toast.LENGTH_SHORT)
-				.show();
+                .show();
 	}
 
 }

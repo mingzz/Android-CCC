@@ -12,8 +12,8 @@ public class ConfigEntity {
 	public String name = "";
 	public String password = "";
 
-	public String ip = "";
-	public int port;
+	public String ip = "demo.anychat.cn";
+	public int port = 8906;
 	
 	public int configMode = VIDEO_MODE_SERVERCONFIG;
 	public int resolution_width = 0;

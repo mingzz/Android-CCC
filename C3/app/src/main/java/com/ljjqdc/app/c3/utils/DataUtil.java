@@ -6,7 +6,7 @@ package com.ljjqdc.app.c3.utils;
 public class DataUtil {
     public static String username;
     public static String password;
-    public static String ip;
-    public static String port;
+    public static String ip = "demo.anychat.cn";
+    public static int port = 8906;
 
 }

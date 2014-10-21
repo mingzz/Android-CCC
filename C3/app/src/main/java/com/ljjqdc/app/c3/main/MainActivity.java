@@ -23,6 +23,7 @@ import com.bairuitech.anychat.AnyChatDefine;
 import com.example.helloanychat.ChatMainActivity;
 import com.ljjqdc.app.c3.R;
 import com.ljjqdc.app.c3.setting.ConfigEntity;
+import com.ljjqdc.app.c3.utils.DataUtil;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -50,9 +51,10 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
     private String outputMessage = "你想发送的东西";
 
     //AnyChat
-    public AnyChatCoreSDK anyChatSDK;
-    public ConfigEntity configEntity;
+    private AnyChatCoreSDK anyChatSDK;
+    private ConfigEntity configEntity;
     private FrameLayout layout3;//视频层
+    private boolean isAnyChatOnline = false;
 
     //voice recognizer
     private Button buttonVoiceRecognizer;
@@ -126,7 +128,12 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b){
-                    layout3.setVisibility(View.VISIBLE);
+                    if(isAnyChatOnline){
+                        layout3.setVisibility(View.VISIBLE);
+                    }else{
+
+                    }
+
                 }else {
                     layout3.setVisibility(View.GONE);
                 }
@@ -296,16 +303,39 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
             AnyChatCoreSDK.SetSDKOptionInt(
                     AnyChatDefine.BRAC_SO_AUDIO_RECORDDRVCTRL, configEntity.audioRecordDriver);
         }
+
+        //登陆AnyChat
+        if(DataUtil.username!=null && DataUtil.password!=null){
+            anyChatSDK.Connect(DataUtil.ip, DataUtil.port);
+            anyChatSDK.Login(DataUtil.username, DataUtil.password);
+        }
+
     }
 
     @Override
     public void OnAnyChatConnectMessage(boolean bSuccess) {
-
+        if (!bSuccess) {
+            textViewLogs.setText("连接视频通信服务器失败，自动重连，请稍后...");
+            Log.i("ljj","连接视频通信服务器失败，自动重连，请稍后...");
+            isAnyChatOnline = false;
+        }else{
+            isAnyChatOnline = true;
+        }
     }
 
     @Override
     public void OnAnyChatLoginMessage(int dwUserId, int dwErrorCode) {
-
+        if (dwErrorCode == 0) {
+            textViewLogs.setText("登录成功！");
+            Log.i("ljj","登录成功！");
+            int sHourseID = 1;
+            anyChatSDK.EnterRoom(sHourseID, "");
+            isAnyChatOnline = true;
+        } else {
+            textViewLogs.setText("登录失败，错误代码：" + dwErrorCode);
+            Log.i("ljj","登录失败，错误代码：" + dwErrorCode);
+            isAnyChatOnline = false;
+        }
     }
 
     @Override
@@ -325,6 +355,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
 
     @Override
     public void OnAnyChatLinkCloseMessage(int dwErrorCode) {
-
+        textViewLogs.setText("连接关闭，error：" + dwErrorCode);
+        isAnyChatOnline = false;
     }
 }
