@@ -6,16 +6,20 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.helloanychat.ChatMainActivity;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -31,6 +35,10 @@ public class MainActivity extends Activity {
 
     private String outputMessage = "你想发送的东西";
 
+    //voice recognizer
+    private Button buttonVoiceRecognizer;
+    private TextView textViewVoiceRecognizer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +53,8 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
+
+        initVoiceRecognizer();
     }
 
     private void initBlueTooth(){
@@ -95,5 +105,38 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
 
+    }
+
+    private void initVoiceRecognizer(){
+        buttonVoiceRecognizer = (Button)findViewById(R.id.btn_voice_recognizer);
+        textViewVoiceRecognizer = (TextView)findViewById(R.id.tv_voice_recognizer);
+
+        buttonVoiceRecognizer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //try{
+                    Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                    intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                    intent.putExtra(RecognizerIntent.EXTRA_PROMPT,"kaishi");
+                    startActivityForResult(intent,0);
+                //}catch (Exception e){
+                //    e.printStackTrace();
+                //    Toast.makeText(MainActivity.this,"cuole",Toast.LENGTH_SHORT).show();
+                //}
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if(requestCode==0&&resultCode==RESULT_OK){
+            ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            String resultString = "";
+            for(int i=0;i<results.size();++i){
+                resultString+=results.get(i);
+            }
+            textViewVoiceRecognizer.setText(resultString);
+        }
     }
 }
