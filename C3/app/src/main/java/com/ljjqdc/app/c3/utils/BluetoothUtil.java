@@ -25,6 +25,9 @@ public class BluetoothUtil {
     public static boolean SERVER_OPEN = false;//服务器端开启
     public static boolean CLIENT_CONNECT = false;//客户端连接成功
 
+    public static final String ACTION_SERVER_OPEN = "com.ljjqdc.app.c3.utils.BluetoothUtil.server_open";
+    public static final String ACTION_CLIENT_OPEN = "com.ljjqdc.app.c3.utils.BluetoothUtil.client_open";
+
     private Context context;
 
     //Bluetooth
@@ -165,6 +168,10 @@ public class BluetoothUtil {
                 bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord("ljjserver",MY_UUID);
                 bluetoothSocket = bluetoothServerSocket.accept();
                 SERVER_OPEN = true;Log.i("ljjbluetooth","server open");
+
+                Intent intent = new Intent();
+                intent.setAction(ACTION_SERVER_OPEN);
+                context.sendBroadcast(intent);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -183,6 +190,10 @@ public class BluetoothUtil {
             try {
                 bluetoothSocket.connect();
                 CLIENT_CONNECT = true;Log.i("ljjbluetooth","connect succeed");
+
+                Intent intent = new Intent();
+                intent.setAction(ACTION_CLIENT_OPEN);
+                context.sendBroadcast(intent);
             } catch (IOException e) {
                 Log.i("ljjbluetooth","蓝牙连接失败!"+e.toString());
                 e.printStackTrace();
