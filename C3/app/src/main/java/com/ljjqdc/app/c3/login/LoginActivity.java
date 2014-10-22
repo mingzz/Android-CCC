@@ -95,12 +95,14 @@ public class LoginActivity extends Activity {
                 if(b){
                     //作为客户端
                     layoutConnectBluetooth.setVisibility(View.VISIBLE);
+                    textViewStatus.setText("");
 
                     finishSever();//关闭服务器
                     startClient();//开启客户端
                 }else{
                     //作为服务器
                     layoutConnectBluetooth.setVisibility(View.GONE);
+                    textViewStatus.setText("");
 
                     finishClient();//关闭客户端
                     startServer();//开启服务器
@@ -160,7 +162,6 @@ public class LoginActivity extends Activity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-
             if(intent.getAction().equals(BluetoothDevice.ACTION_FOUND)){
                 BluetoothDevice deviceTmp = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 deviceMap.put(deviceTmp.getName(),deviceTmp);
@@ -172,7 +173,6 @@ public class LoginActivity extends Activity {
             }else if(intent.getAction().equals(BluetoothUtil.ACTION_CLIENT_OPEN)){
                 //客户端成功连接一台设备
                 textViewStatus.setText("蓝牙连接成功！");
-                listViewBluetoothDevices.setFocusable(false);
             }else if(intent.getAction().equals(BluetoothUtil.ACTION_SERVER_OPEN)){
                 //服务器打开成功
                 textViewStatus.setText("服务器打开啦");
@@ -202,6 +202,7 @@ public class LoginActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 bluetoothUtil.connectBluetoothDevice(deviceMap.get(deviceNames.get(i)));
+                DataUtil.connectDeviceName = deviceNames.get(i);
             }
         });
     }
@@ -217,7 +218,8 @@ public class LoginActivity extends Activity {
     private void startClient(){
         deviceMap = new HashMap<String, BluetoothDevice>();
         deviceNames = new ArrayList<String>();
-        listViewBluetoothDevices.setFocusable(true);
+        arrayAdapterDevices = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,deviceNames);
+        listViewBluetoothDevices.setAdapter(arrayAdapterDevices);
         bluetoothUtil.startSearch();
     }
 

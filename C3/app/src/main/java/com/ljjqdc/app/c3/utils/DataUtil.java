@@ -9,4 +9,6 @@ public class DataUtil {
     public static String ip = "demo.anychat.cn";
     public static int port = 8906;
 
+    public static String connectDeviceName = "";
+
 }

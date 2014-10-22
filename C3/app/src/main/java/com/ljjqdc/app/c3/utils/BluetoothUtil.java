@@ -77,11 +77,6 @@ public class BluetoothUtil {
                     }).create().show();
         }
 
-        //设备可以被检测到
-        Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,3000);
-        con.startActivity(intent);
-
     }
 
     /**
@@ -96,6 +91,11 @@ public class BluetoothUtil {
      * 初始化服务器端
      */
     public void startServer(){
+        //设备可以被检测到
+        Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,3000);
+        context.startActivity(intent);
+
         serverThread = new ServerThread();
         serverThread.start();
     }
@@ -166,7 +166,7 @@ public class BluetoothUtil {
         public void run(){
             try {
                 bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord("ljjserver",MY_UUID);
-                bluetoothSocket = bluetoothServerSocket.accept();
+                //bluetoothSocket = bluetoothServerSocket.accept();
                 SERVER_OPEN = true;Log.i("ljjbluetooth","server open");
 
                 Intent intent = new Intent();
