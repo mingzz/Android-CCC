@@ -3,6 +3,7 @@ package com.ljjqdc.app.c3.utils;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,6 +28,7 @@ public class BluetoothUtil {
     private BluetoothDevice bluetoothDevice;
 
     private BluetoothSocket bluetoothSocket;
+    private BluetoothServerSocket bluetoothServerSocket;
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     private String logs = "";
@@ -63,6 +65,7 @@ public class BluetoothUtil {
                     }).create().show();
         }
 
+        //设备可以被检测到
         Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,3000);
         con.startActivity(intent);
@@ -70,6 +73,9 @@ public class BluetoothUtil {
         //检测到可连接的蓝牙设备
         //bluetoothDevices = bluetoothAdapter.getBondedDevices();
         bluetoothAdapter.startDiscovery();
+
+        //开启服务器端
+        new ServerThread().start();
     }
 
     public String getLogs(){
@@ -82,22 +88,41 @@ public class BluetoothUtil {
             return;
         }
 
-        try {
-            bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(MY_UUID);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        bluetoothAdapter.cancelDiscovery();
-        try {
-            bluetoothSocket.connect();
-            logs = "蓝牙连接成功!";
-        } catch (IOException e) {
-            logs = "蓝牙连接失败!";Log.i("ljjbluetooth",e.toString());
-            e.printStackTrace();
+        new ClientThread().start();
+    }
+
+    private class ServerThread extends Thread{
+        @Override
+        public void run(){
             try {
-                bluetoothSocket.close();
-            } catch (IOException e1) {
-                e1.printStackTrace();
+                bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord("ljjserver",MY_UUID);
+                bluetoothSocket = bluetoothServerSocket.accept();Log.i("ljjbluetooth","server open");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class ClientThread extends Thread{
+        @Override
+        public void run(){
+            try {
+                bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(MY_UUID);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            bluetoothAdapter.cancelDiscovery();
+            try {
+                bluetoothSocket.connect();
+                logs = "蓝牙连接成功!";Log.i("ljjbluetooth","connect succeed");
+            } catch (IOException e) {
+                logs = "蓝牙连接失败!";Log.i("ljjbluetooth",e.toString());
+                e.printStackTrace();
+                try {
+                    bluetoothSocket.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
         }
     }

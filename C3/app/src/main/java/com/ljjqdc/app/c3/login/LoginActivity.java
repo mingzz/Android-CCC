@@ -128,8 +128,8 @@ public class LoginActivity extends Activity {
                 BluetoothDevice deviceTmp = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 deviceMap.put(deviceTmp.getName(),deviceTmp);
                 deviceNames.add(deviceTmp.getName());
-                arrayAdapterDevices.notifyDataSetChanged();
-                //arrayAdapterDevices = new ArrayAdapter<String>(LoginActivity.this,android.R.layout.simple_list_item_1,deviceNames);
+                //arrayAdapterDevices.notifyDataSetChanged();
+                arrayAdapterDevices = new ArrayAdapter<String>(LoginActivity.this,android.R.layout.simple_list_item_1,deviceNames);
                 listViewBluetoothDevices.setAdapter(arrayAdapterDevices);
                 Log.i("ljjbluetooth","receive");
             }else if(intent.getAction().equals(BluetoothAdapter.ACTION_DISCOVERY_STARTED)){
