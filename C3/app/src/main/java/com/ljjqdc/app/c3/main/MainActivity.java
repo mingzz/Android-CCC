@@ -41,15 +41,6 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
     private CheckBox checkBoxVideo;
     private TextView textViewLogs;
 
-    //Bluetooth
-    private BluetoothAdapter bluetoothAdapter;
-    private BluetoothSocket bluetoothSocket;
-    private BluetoothDevice bluetoothDevice;
-
-    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
-    private String outputMessage = "你想发送的东西";
-
     //AnyChat
     private AnyChatCoreSDK anyChatSDK;
     private ConfigEntity configEntity;
@@ -140,60 +131,6 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
             }
         });
     }
-
-    /**
-     * 蓝牙控制小车
-     */
-    private void initBlueTooth(){
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if(bluetoothAdapter==null || !bluetoothAdapter.isEnabled()){
-            finish();
-            return;
-        }
-
-        Set<BluetoothDevice> devices = bluetoothAdapter.getBondedDevices();
-        BluetoothDevice device = null;
-        for(int i=0;i<devices.size();i++){
-            device = (BluetoothDevice)devices.toArray()[i];
-            Log.i("device_name",device.getName());//device_name﹕ Lenovo A600e
-            if(device.getName().equals("Lenovo A600e")){
-                bluetoothDevice = device;
-                break;
-            }
-        }
-
-        if(bluetoothDevice == null){
-            finish();
-            return;
-        }
-
-        try {
-            bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(MY_UUID);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        bluetoothAdapter.cancelDiscovery();
-        try {
-            bluetoothSocket.connect();
-        } catch (IOException e) {
-            e.printStackTrace();
-            try {
-                bluetoothSocket.close();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        }
-
-        //利用 BluetoothSocket获取输出流进行输出
-        try {
-            OutputStream outputStream = bluetoothSocket.getOutputStream();
-            outputStream.write(outputMessage.getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
 
     /**
      * 语音识别
