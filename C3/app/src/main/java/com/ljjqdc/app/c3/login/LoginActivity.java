@@ -95,17 +95,15 @@ public class LoginActivity extends Activity {
                 if(b){
                     //作为客户端
                     layoutConnectBluetooth.setVisibility(View.VISIBLE);
-                    //关闭服务器
-                    finishSever();
-                    //开启客户端
-                    startClient();
+
+                    finishSever();//关闭服务器
+                    startClient();//开启客户端
                 }else{
                     //作为服务器
                     layoutConnectBluetooth.setVisibility(View.GONE);
-                    //关闭客户端
-                    finishClient();
-                    //开启服务器
-                    startServer();
+
+                    finishClient();//关闭客户端
+                    startServer();//开启服务器
                 }
             }
         });
@@ -127,20 +125,30 @@ public class LoginActivity extends Activity {
                     return;
                 }
 
-                DataUtil.username = username;
-                DataUtil.password = password;
+                if(bluetoothUtil.CLIENT_CONNECT || bluetoothUtil.SERVER_OPEN){
+                    //作为客户端或者服务器连接上了
+                    DataUtil.username = username;
+                    DataUtil.password = password;
 
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }else{
+                    Toast.makeText(LoginActivity.this,"蓝牙设备未连接",Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
         buttonTour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
+                if(bluetoothUtil.CLIENT_CONNECT || bluetoothUtil.SERVER_OPEN){
+                    //作为客户端或者服务器连接上了
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }else{
+                    Toast.makeText(LoginActivity.this,"蓝牙设备未连接",Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
     }
@@ -161,10 +169,6 @@ public class LoginActivity extends Activity {
                 arrayAdapterDevices = new ArrayAdapter<String>(LoginActivity.this,android.R.layout.simple_list_item_1,deviceNames);
                 listViewBluetoothDevices.setAdapter(arrayAdapterDevices);
                 textViewStatus.setText("找到以下设备，点击连接");
-            }else if(intent.getAction().equals(BluetoothAdapter.ACTION_DISCOVERY_STARTED)){
-                textViewStatus.setText("正在查找可用设备。。。");
-            }else if(intent.getAction().equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)){
-                textViewStatus.setText("查找完毕");
             }
 
         }
@@ -182,8 +186,8 @@ public class LoginActivity extends Activity {
         listViewBluetoothDevices.setAdapter(arrayAdapterDevices);
 
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-        intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        //intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        //intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         registerReceiver(bluetoothReceiver, intentFilter);
 
         //点击列表项建立连接
@@ -209,6 +213,8 @@ public class LoginActivity extends Activity {
     }
 
     private void startClient(){
+        deviceMap = new HashMap<String, BluetoothDevice>();
+        deviceNames = new ArrayList<String>();
         bluetoothUtil.startSearch();
     }
 

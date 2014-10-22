@@ -101,6 +101,7 @@ public class BluetoothUtil {
      * 关闭服务器端
      */
     public void finishServer(){
+        SERVER_OPEN = false;
         if(serverThread!=null){
             serverThread.interrupt();
             serverThread = null;
@@ -141,6 +142,7 @@ public class BluetoothUtil {
      * 关闭客户端连接
      */
     public void finishClient(){
+        CLIENT_CONNECT = false;
         if(clientThread!=null){
             clientThread.interrupt();
             clientThread = null;
