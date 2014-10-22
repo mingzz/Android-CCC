@@ -15,9 +15,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +40,8 @@ import java.util.Set;
 public class LoginActivity extends Activity {
 
     //bluetooth
+    private Switch switchServerOrClient;
+    private LinearLayout layoutConnectBluetooth;
     private TextView textViewStatus;
     private ListView listViewBluetoothDevices;
     private Button buttonReScanDevices;
@@ -60,14 +64,17 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
 
         initView();
-        initButtonClickListener();
+        initListener();
 
         initBluetooth();
-        scanBluetoothDevices();
+        startServer();
     }
 
     private void initView(){
+        switchServerOrClient = (Switch)findViewById(R.id.switchSeverOrClient);
         textViewStatus = (TextView)findViewById(R.id.textViewStatus);
+
+        layoutConnectBluetooth = (LinearLayout)findViewById(R.id.layoutConnectBluetooth);
         listViewBluetoothDevices = (ListView)findViewById(R.id.listViewBluetoothDevices);
         buttonReScanDevices = (Button)findViewById(R.id.buttonReScanDevices);
 
@@ -77,14 +84,36 @@ public class LoginActivity extends Activity {
         buttonLogin = (Button)findViewById(R.id.buttonLogin);
         buttonTour = (Button)findViewById(R.id.buttonTour);
 
-        layoutLogin.setVisibility(View.GONE);
+        layoutConnectBluetooth.setVisibility(View.GONE);
+
     }
 
-    private void initButtonClickListener(){
+    private void initListener(){
+        switchServerOrClient.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b){
+                    //作为客户端
+                    layoutConnectBluetooth.setVisibility(View.VISIBLE);
+                    //关闭服务器
+                    finishSever();
+                    //开启客户端
+                    startClient();
+                }else{
+                    //作为服务器
+                    layoutConnectBluetooth.setVisibility(View.GONE);
+                    //关闭客户端
+                    finishClient();
+                    //开启服务器
+                    startServer();
+                }
+            }
+        });
+
         buttonReScanDevices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                scanBluetoothDevices();
+                startClient();
             }
         });
         buttonLogin.setOnClickListener(new View.OnClickListener() {
@@ -117,9 +146,9 @@ public class LoginActivity extends Activity {
     }
 
     /**
-     * 蓝牙扫描
+     * 蓝牙扫描广播
      */
-    private class BluetoothBroadcastReceiver extends BroadcastReceiver{
+    private BroadcastReceiver bluetoothReceiver =new BroadcastReceiver(){
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -131,44 +160,59 @@ public class LoginActivity extends Activity {
                 //arrayAdapterDevices.notifyDataSetChanged();
                 arrayAdapterDevices = new ArrayAdapter<String>(LoginActivity.this,android.R.layout.simple_list_item_1,deviceNames);
                 listViewBluetoothDevices.setAdapter(arrayAdapterDevices);
-                Log.i("ljjbluetooth","receive");
+                textViewStatus.setText("找到以下设备，点击连接");
             }else if(intent.getAction().equals(BluetoothAdapter.ACTION_DISCOVERY_STARTED)){
-                Log.i("ljjbluetooth","start");
+                textViewStatus.setText("正在查找可用设备。。。");
             }else if(intent.getAction().equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)){
-                Log.i("ljjbluetooth","finish");
+                textViewStatus.setText("查找完毕");
             }
 
         }
+    };
+
+    @Override
+    public void onDestroy(){
+        unregisterReceiver(bluetoothReceiver);
+        super.onDestroy();
     }
 
     private void initBluetooth(){
+        bluetoothUtil = new BluetoothUtil(this);
         arrayAdapterDevices = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,deviceNames);
         listViewBluetoothDevices.setAdapter(arrayAdapterDevices);
 
-        BluetoothBroadcastReceiver bluetoothReceiver = new BluetoothBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
         intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        registerReceiver(bluetoothReceiver,intentFilter);
+        registerReceiver(bluetoothReceiver, intentFilter);
 
         //点击列表项建立连接
         listViewBluetoothDevices.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 bluetoothUtil.connectBluetoothDevice(deviceMap.get(deviceNames.get(i)));
-                textViewStatus.setText(bluetoothUtil.getLogs());
-                if(bluetoothUtil.getLogs().equals("蓝牙连接成功!")){
-                    layoutLogin.setVisibility(View.VISIBLE);
+                if(BluetoothUtil.CLIENT_CONNECT){
+                    textViewStatus.setText("蓝牙连接成功！");//以后再用广播方式改进
+                }else{
+                    textViewStatus.setText("蓝牙连接失败。。。不如多试几次。。。");
                 }
             }
         });
     }
 
-    private void scanBluetoothDevices(){
-        deviceMap = new HashMap<String, BluetoothDevice>();
-        deviceNames = new ArrayList<String>();
-        arrayAdapterDevices.notifyDataSetChanged();
-        bluetoothUtil = new BluetoothUtil(this);
+    private void startServer(){
+        bluetoothUtil.startServer();
     }
 
+    private void finishSever(){
+        bluetoothUtil.finishServer();
+    }
+
+    private void startClient(){
+        bluetoothUtil.startSearch();
+    }
+
+    private void finishClient(){
+        bluetoothUtil.finishClient();
+    }
 }

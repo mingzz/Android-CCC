@@ -20,6 +20,11 @@ import java.util.UUID;
  * Created by jingjing on 2014/10/22.
  */
 public class BluetoothUtil {
+    public static boolean HAS_BLUETOOTH = false;//"找不到蓝牙设备"
+    public static boolean BLUETOOTH_OPEN = false;//"等待用户开启蓝牙设备"
+    public static boolean SERVER_OPEN = false;//服务器端开启
+    public static boolean CLIENT_CONNECT = false;//客户端连接成功
+
     private Context context;
 
     //Bluetooth
@@ -27,24 +32,28 @@ public class BluetoothUtil {
     //private Set<BluetoothDevice> bluetoothDevices;
     private BluetoothDevice bluetoothDevice;
 
+    private ServerThread serverThread;
+    private ClientThread clientThread;
+
     private BluetoothSocket bluetoothSocket;
     private BluetoothServerSocket bluetoothServerSocket;
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
-    private String logs = "";
-
+    /**
+     * 初始化,做一次就好
+     */
     public BluetoothUtil(Context con){
         context = con;
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(bluetoothAdapter==null){
             //这台机器上没有蓝牙设备
-            logs = "找不到蓝牙设备";
             return;
         }
+        HAS_BLUETOOTH = true;
+
         if(!bluetoothAdapter.isEnabled()){
             //蓝牙设备没有开启
-            logs = "等待用户开启蓝牙设备";
             Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             new AlertDialog.Builder(con).setTitle("是否开启蓝牙？")
                     .setNegativeButton("取消",new DialogInterface.OnClickListener() {
@@ -58,7 +67,7 @@ public class BluetoothUtil {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             bluetoothAdapter.enable();
                             if(bluetoothAdapter.isEnabled()){
-                                logs = "蓝牙已打开";
+                                BLUETOOTH_OPEN = true;
                             }
                             dialogInterface.dismiss();
                         }
@@ -70,25 +79,81 @@ public class BluetoothUtil {
         intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,3000);
         con.startActivity(intent);
 
-        //检测到可连接的蓝牙设备
-        //bluetoothDevices = bluetoothAdapter.getBondedDevices();
+    }
+
+    /**
+     * 检测到可连接的蓝牙设备
+     */
+    public void startSearch(){
+        //bluetoothDevices = bluetoothAdapter.getBondedDevices();//得到最近配对的设备
         bluetoothAdapter.startDiscovery();
-
-        //开启服务器端
-        new ServerThread().start();
     }
 
-    public String getLogs(){
-        return logs;
+    /**
+     * 初始化服务器端
+     */
+    public void startServer(){
+        serverThread = new ServerThread();
+        serverThread.start();
     }
 
+    /**
+     * 关闭服务器端
+     */
+    public void finishServer(){
+        if(serverThread!=null){
+            serverThread.interrupt();
+            serverThread = null;
+        }
+        if(bluetoothServerSocket!=null){
+            try {
+                bluetoothServerSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            bluetoothServerSocket = null;
+        }
+        if(bluetoothSocket!=null){
+            try {
+                bluetoothSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            bluetoothSocket = null;
+        }
+        SERVER_OPEN = false;
+    }
+
+    /**
+     * 客户端连接
+     */
     public void connectBluetoothDevice(BluetoothDevice device){
         bluetoothDevice = device;
         if(bluetoothDevice == null){
             return;
         }
 
-        new ClientThread().start();
+        clientThread = new ClientThread();
+        clientThread.start();
+    }
+
+    /**
+     * 关闭客户端连接
+     */
+    public void finishClient(){
+        if(clientThread!=null){
+            clientThread.interrupt();
+            clientThread = null;
+        }
+        if(bluetoothSocket!=null){
+            try {
+                bluetoothSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            bluetoothSocket = null;
+        }
+        CLIENT_CONNECT = false;
     }
 
     private class ServerThread extends Thread{
@@ -96,7 +161,8 @@ public class BluetoothUtil {
         public void run(){
             try {
                 bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord("ljjserver",MY_UUID);
-                bluetoothSocket = bluetoothServerSocket.accept();Log.i("ljjbluetooth","server open");
+                bluetoothSocket = bluetoothServerSocket.accept();
+                SERVER_OPEN = true;Log.i("ljjbluetooth","server open");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -114,9 +180,9 @@ public class BluetoothUtil {
             bluetoothAdapter.cancelDiscovery();
             try {
                 bluetoothSocket.connect();
-                logs = "蓝牙连接成功!";Log.i("ljjbluetooth","connect succeed");
+                CLIENT_CONNECT = true;Log.i("ljjbluetooth","connect succeed");
             } catch (IOException e) {
-                logs = "蓝牙连接失败!";Log.i("ljjbluetooth",e.toString());
+                Log.i("ljjbluetooth","蓝牙连接失败!"+e.toString());
                 e.printStackTrace();
                 try {
                     bluetoothSocket.close();
@@ -127,9 +193,12 @@ public class BluetoothUtil {
         }
     }
 
+    /**
+     * 发送信息
+     */
     public void sendMessage(String outputMessage){//outputMessage = "你想发送的东西";
         if(!bluetoothSocket.isConnected()){
-            logs = "蓝牙设备未连接，发送失败";
+            //logs = "蓝牙设备未连接，发送失败";
             return;
         }
 
@@ -137,7 +206,7 @@ public class BluetoothUtil {
         try {
             OutputStream outputStream = bluetoothSocket.getOutputStream();
             outputStream.write(outputMessage.getBytes());
-            logs = "发送成功："+outputMessage;
+            //logs = "发送成功："+outputMessage;
         } catch (IOException e) {
             e.printStackTrace();
         }

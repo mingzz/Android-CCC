@@ -4,15 +4,26 @@
     android:layout_height="fill_parent"
     tools:context="com.ljjqdc.app.c3.login.LoginActivity">
 
+    <Switch
+        android:id="@+id/switchSeverOrClient"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:checked="false"
+        android:textOff="服务器"
+        android:textOn="客户端"/>
+    <TextView
+        android:id="@+id/textViewStatus"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp" />
+
     <LinearLayout
+        android:id="@+id/layoutConnectBluetooth"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_margin="50dp"
         android:orientation="vertical">
-        <TextView
-            android:id="@+id/textViewStatus"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
         <ListView
             android:id="@+id/listViewBluetoothDevices"
             android:layout_width="fill_parent"
