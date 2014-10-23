@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -74,6 +76,9 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
     private Button buttonLeft;
     private Button buttonRight;
 
+    //划屏控制
+    private boolean useGesture = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,8 +92,6 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         initAnyChatSDK();
 
         initButtonController();
-
-        initGestureController();
 
         initVoiceRecognizer();
 
@@ -124,6 +127,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         checkBoxGesture.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                useGesture = b;
                 if(b){
                     textViewLogs.setText("可以划屏控制哦~");
                 }else{
@@ -230,8 +234,28 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
     /**
      * 手势划屏控制
      */
-    private void initGestureController(){
+    private GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener(){
+        @Override
+        public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent2, float v, float v2) {
+            if(useGesture){
+                if (motionEvent.getX() - motionEvent2.getX() > 100 && Math.abs(v) > 50) {
+                    textViewLogs.setText("左");
+                }else if(motionEvent2.getX() - motionEvent.getX() > 100 && Math.abs(v) > 50){
+                    textViewLogs.setText("右");
+                }else if(motionEvent2.getY() - motionEvent.getY() > 100 && Math.abs(v) > 50){
+                    textViewLogs.setText("下");
+                }else if(motionEvent.getY() - motionEvent2.getY() > 100 && Math.abs(v) > 50){
+                    textViewLogs.setText("上");
+                }
+            }
+            return super.onFling(motionEvent,motionEvent2,v,v2);
+        }
+    });
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        gestureDetector.onTouchEvent(ev);
+        return super.dispatchTouchEvent(ev);
     }
 
     /**
