@@ -41,16 +41,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.example.helloanychat.ChatMainActivity" />
-        <activity
-            android:name="com.example.helloanychat.VideoActivity"
-            android:configChanges="orientation|keyboardHidden|navigation"
-            android:launchMode="singleTask" >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
     </application>
 
 </manifest>

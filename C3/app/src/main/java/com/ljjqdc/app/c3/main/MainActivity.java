@@ -31,7 +31,6 @@ import android.widget.Toast;
 import com.bairuitech.anychat.AnyChatBaseEvent;
 import com.bairuitech.anychat.AnyChatCoreSDK;
 import com.bairuitech.anychat.AnyChatDefine;
-import com.example.helloanychat.ChatMainActivity;
 import com.ljjqdc.app.c3.R;
 import com.ljjqdc.app.c3.setting.ConfigEntity;
 import com.ljjqdc.app.c3.utils.DataUtil;
@@ -98,15 +97,6 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
      * 初始化界面控件显示
      */
     private void initView(){
-        //临时
-        Button button = (Button)findViewById(R.id.btn_test);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, ChatMainActivity.class);
-                startActivity(intent);
-            }
-        });
 
         checkBoxButton = (CheckBox)findViewById(R.id.checkBoxButton);
         checkBoxGesture = (CheckBox)findViewById(R.id.checkBoxGesture);
@@ -147,7 +137,10 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
                 }else {
                     closeVideoChat();
                     layout3.setVisibility(View.GONE);
-                    surfaceViewMe.setVisibility(View.GONE);
+                    if(surfaceViewMe!=null){
+                        surfaceViewMe.setVisibility(View.GONE);
+                    }
+
                 }
             }
         });

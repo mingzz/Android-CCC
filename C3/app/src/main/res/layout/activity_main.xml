@@ -9,18 +9,42 @@
     <FrameLayout
         android:id="@+id/layout3"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_marginBottom="30dp">
-        <include
+        android:layout_height="fill_parent">
+
+        <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            layout="@layout/video_session"
-            android:gravity="center_vertical" />
+            android:layout_marginBottom="30dp">
+            <SurfaceView
+                android:id="@+id/surface_remote"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center" />
+
+            <LinearLayout
+                android:id="@+id/frame_local_area"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom|right"
+                android:orientation="vertical"
+                android:padding="3dip" >
+
+                <SurfaceView
+                    android:id="@+id/surface_local"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dip"
+                    android:layout_gravity="center"
+                    android:layout_weight="1" />
+            </LinearLayout>
+        </FrameLayout>
+
         <ImageView
             android:id="@+id/ImgSwichVideo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_gravity="bottom|right"
             android:src="@drawable/switchvideo"
             android:background="@drawable/btn_switchvideo_bg"/>
     </FrameLayout>
@@ -132,15 +156,6 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="30dp"
             android:text="识别语音"/>
-
-        <Button
-            android:id="@+id/btn_test"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="30dp"
-            android:text="testChat"/>
     </RelativeLayout>
 
 </FrameLayout>
