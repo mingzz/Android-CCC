@@ -1,4 +1,4 @@
-package com.example.helloanychat;
+package com.ljjqdc.app.c3.main;
 
 import java.util.List;
 import java.util.Random;

@@ -7,6 +7,8 @@ import com.bairuitech.anychat.AnyChatBaseEvent;
 import com.bairuitech.anychat.AnyChatCoreSDK;
 import com.bairuitech.anychat.AnyChatDefine;
 import com.ljjqdc.app.c3.R;
+import com.ljjqdc.app.c3.main.RoleInfo;
+import com.ljjqdc.app.c3.main.RoleListAdapter;
 
 import android.app.Activity;
 import android.content.Context;
