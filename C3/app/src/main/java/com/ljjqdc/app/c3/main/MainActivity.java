@@ -61,8 +61,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
     private SurfaceView surfaceViewOther;
     private ImageView imageViewSwitchCamera;
     private boolean isAnyChatOnline = false;
-    private boolean bSelfVideoOpened = false; // 本地视频是否已打开
-    private boolean bOtherVideoOpened = false; // 对方视频是否已打开
+    private boolean isAnyChatChatting = false;
     private List<RoleInfo> roleInfoList;
     private int otherUserId;//对面的人的user id
 
@@ -148,6 +147,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
                 }else {
                     closeVideoChat();
                     layout3.setVisibility(View.GONE);
+                    surfaceViewMe.setVisibility(View.GONE);
                 }
             }
         });
@@ -237,12 +237,9 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
      */
     private void initAnyChatView(){
         layout3 = (FrameLayout)findViewById(R.id.layout3);
-        surfaceViewMe = (SurfaceView)findViewById(R.id.surface_local);
-        surfaceViewOther = (SurfaceView)findViewById(R.id.surface_remote);
         imageViewSwitchCamera = (ImageView)findViewById(R.id.ImgSwichVideo);
 
         layout3.setVisibility(View.GONE);
-        surfaceViewMe.setZOrderOnTop(true);
     }
 
     private void initAnyChatSDK(){
@@ -279,7 +276,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
      */
     private void openVideoChat(){
         //获取当前在线人的列表
-        Dialog dialog = new Dialog(this);
+        final Dialog dialog = new Dialog(this);
         dialog.setTitle("选择视频对象");
         ListView listView = new ListView(this);
         dialog.setContentView(listView);
@@ -302,6 +299,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 videoChat(roleInfoList.get(i));
+                dialog.dismiss();
             }
         });
 
@@ -309,6 +307,13 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
 
     //建立视频聊天
     private void videoChat(RoleInfo roleInfo){
+        surfaceViewMe = (SurfaceView)findViewById(R.id.surface_local);
+        surfaceViewOther = (SurfaceView)findViewById(R.id.surface_remote);
+        surfaceViewMe.setVisibility(View.VISIBLE);
+        surfaceViewOther.setVisibility(View.VISIBLE);
+        surfaceViewMe.setZOrderOnTop(true);
+
+        isAnyChatChatting = true;
         otherUserId = Integer.parseInt(roleInfo.getUserID());
         textViewLogs.setText("正在和"+roleInfo.getName()+"视频聊天");
         //初始化
@@ -319,8 +324,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
             @Override
             public void onClick(View view) {
                 // 如果是采用Java视频采集，则在Java层进行摄像头切换
-                if (AnyChatCoreSDK
-                        .GetSDKOptionInt(AnyChatDefine.BRAC_SO_LOCALVIDEO_CAPDRIVER) == AnyChatDefine.VIDEOCAP_DRIVER_JAVA) {
+                if (AnyChatCoreSDK.GetSDKOptionInt(AnyChatDefine.BRAC_SO_LOCALVIDEO_CAPDRIVER) == AnyChatDefine.VIDEOCAP_DRIVER_JAVA) {
                     AnyChatCoreSDK.mCameraHelper.SwitchCamera();
                     return;
                 }
@@ -330,7 +334,6 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
                 for (int i = 0; i < strVideoCaptures.length; i++) {
                     if (!temp.equals(strVideoCaptures[i])) {
                         anyChatSDK.UserCameraControl(-1, 0);
-                        bSelfVideoOpened = false;
                         anyChatSDK.SelectVideoCapture(strVideoCaptures[i]);
                         anyChatSDK.UserCameraControl(-1, 1);
                         break;
@@ -342,8 +345,12 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         // 如果是采用Java视频采集，则需要设置Surface的CallBack
         if (AnyChatCoreSDK.GetSDKOptionInt(AnyChatDefine.BRAC_SO_LOCALVIDEO_CAPDRIVER) == AnyChatDefine.VIDEOCAP_DRIVER_JAVA) {
             surfaceViewMe.getHolder().addCallback(AnyChatCoreSDK.mCameraHelper);
+        }
+
+        // 如果是采用Java视频显示，则需要设置Surface的CallBack
+        if (AnyChatCoreSDK.GetSDKOptionInt(AnyChatDefine.BRAC_SO_VIDEOSHOW_DRIVERCTRL) == AnyChatDefine.VIDEOSHOW_DRIVER_JAVA) {
             int index = anyChatSDK.mVideoHelper.bindVideo(surfaceViewOther.getHolder());
-            anyChatSDK.mVideoHelper.SetVideoUser(index, Integer.parseInt(roleInfo.getUserID()));
+            anyChatSDK.mVideoHelper.SetVideoUser(index, otherUserId);
         }
 
         SurfaceHolder holder = surfaceViewOther.getHolder();
@@ -372,6 +379,9 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
             }
         }
 
+        anyChatSDK.UserCameraControl(-1, 1);//-1表示对本地视频进行控制，打开本地视频
+        anyChatSDK.UserSpeakControl(-1, 1);//-1表示对本地音频进行控制，打开本地音频
+
         // 根据屏幕方向改变本地surfaceview的宽高比
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             adjustLocalVideo(true);
@@ -379,10 +389,6 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
             adjustLocalVideo(false);
         }
 
-        anyChatSDK.UserCameraControl(-1, 1);//-1表示对本地视频进行控制，打开本地视频
-        anyChatSDK.UserSpeakControl(-1, 1);//-1表示对本地音频进行控制，打开本地音频
-
-        anyChatSDK.SetBaseEvent(this);
     }
 
     private void adjustLocalVideo(boolean bLandScape){
@@ -425,11 +431,35 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         layoutLocal.setLayoutParams(layoutParams);
     }
 
+    private void refreshAV() {
+        anyChatSDK.UserCameraControl(otherUserId, 1);
+        anyChatSDK.UserSpeakControl(otherUserId, 1);
+        anyChatSDK.UserCameraControl(-1, 1);
+        anyChatSDK.UserSpeakControl(-1, 1);
+    }
+
     /**
      * 关闭视频聊天
      */
     private void closeVideoChat(){
+        if(isAnyChatChatting){
+            anyChatSDK.mSensorHelper.DestroySensor();
+            isAnyChatChatting = false;
+            anyChatSDK.UserCameraControl(otherUserId, 0);
+            anyChatSDK.UserSpeakControl(otherUserId, 0);
+            anyChatSDK.UserCameraControl(-1, 0);
+            anyChatSDK.UserSpeakControl(-1, 0);
+        }
 
+    }
+
+    @Override
+    public void onDestroy(){
+        anyChatSDK.Logout();
+        anyChatSDK.Release();
+        isAnyChatOnline = false;
+        isAnyChatChatting = false;
+        super.onDestroy();
     }
 
     @Override
@@ -438,6 +468,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
             textViewLogs.setText("连接视频通信服务器失败，自动重连，请稍后...");
             Log.i("ljj","连接视频通信服务器失败，自动重连，请稍后...");
             isAnyChatOnline = false;
+            isAnyChatChatting = false;
         }else{
             isAnyChatOnline = true;
         }
@@ -465,12 +496,12 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
 
     @Override
     public void OnAnyChatOnlineUserMessage(int dwUserNum, int dwRoomId) {
-
+        refreshAV();
     }
 
     @Override
     public void OnAnyChatUserAtRoomMessage(int dwUserId, boolean bEnter) {
-        if(bEnter){
+        /*if(bEnter){
             //有人上线
             RoleInfo info = new RoleInfo();
             info.setUserID(String.valueOf(dwUserId));
@@ -484,24 +515,34 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
                     roleInfoList.remove(i);
                 }
             }
-        }
+        }*/
     }
 
     @Override
     public void OnAnyChatLinkCloseMessage(int dwErrorCode) {
         textViewLogs.setText("连接关闭，error：" + dwErrorCode);
         isAnyChatOnline = false;
+        isAnyChatChatting = false;
 
         // 网络连接断开之后，上层需要主动关闭已经打开的音视频设备
-        if (bOtherVideoOpened) {
-            anyChatSDK.UserCameraControl(otherUserId, 0);
-            anyChatSDK.UserSpeakControl(otherUserId, 0);
-            bOtherVideoOpened = false;
-        }
-        if (bSelfVideoOpened) {
-            anyChatSDK.UserCameraControl(-1, 0);
-            anyChatSDK.UserSpeakControl(-1, 0);
-            bSelfVideoOpened = false;
-        }
+        anyChatSDK.UserCameraControl(otherUserId, 0);
+        anyChatSDK.UserSpeakControl(otherUserId, 0);
+        anyChatSDK.UserCameraControl(-1, 0);
+        anyChatSDK.UserSpeakControl(-1, 0);
     }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            adjustLocalVideo(true);
+            AnyChatCoreSDK.mCameraHelper.setCameraDisplayOrientation();
+        } else {
+            adjustLocalVideo(false);
+            AnyChatCoreSDK.mCameraHelper.setCameraDisplayOrientation();
+        }
+
+    }
+
+
 }

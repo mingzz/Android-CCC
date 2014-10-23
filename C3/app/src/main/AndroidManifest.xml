@@ -11,11 +11,15 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.RESTART_PACKAGES" />
 
+
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
+        <!--登录-->
         <activity
             android:name=".login.LoginActivity"
             android:label="@string/title_activity_login" >
@@ -25,9 +29,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--主界面-->
         <activity
             android:name=".main.MainActivity"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            android:configChanges="orientation|keyboardHidden|navigation"
+            android:launchMode="singleTask" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <activity android:name="com.example.helloanychat.ChatMainActivity" />
         <activity

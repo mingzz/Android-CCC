@@ -125,7 +125,7 @@ public class ChatMainActivity extends Activity implements AnyChatBaseEvent {
 				setBtnVisible(ConfigEntity.showLoginFlag);
 				anyChatSDK.Logout();
 				mRoleList.setAdapter(null);
-				mBottomConnMsg.setText("No connnect to the server");
+				mBottomConnMsg.setText("No connect to the server");
 			}
 		});
 	}
