@@ -91,6 +91,8 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         initGestureController();
 
         initVoiceRecognizer();
+
+        textViewLogs.setText("初始化完毕~");
     }
 
     /**
@@ -112,15 +114,21 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b){
                     layout2.setVisibility(View.VISIBLE);
+                    textViewLogs.setText("可以点击按钮控制哦~");
                 }else {
                     layout2.setVisibility(View.GONE);
+                    textViewLogs.setText("按钮控制取消");
                 }
             }
         });
         checkBoxGesture.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-
+                if(b){
+                    textViewLogs.setText("可以划屏控制哦~");
+                }else{
+                    textViewLogs.setText("划屏控制取消");
+                }
             }
         });
         checkBoxVideo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -129,6 +137,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
                 if(b){
                     if(isAnyChatOnline){
                         layout3.setVisibility(View.VISIBLE);
+                        textViewLogs.setText("开启视频");
                         openVideoChat();
                     }else{
                         textViewLogs.setText("尚未登录，无法视频");
@@ -140,7 +149,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
                     if(surfaceViewMe!=null){
                         surfaceViewMe.setVisibility(View.GONE);
                     }
-
+                    textViewLogs.setText("视频关闭啦~");
                 }
             }
         });
@@ -177,7 +186,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
             for(int i=0;i<results.size();++i){
                 resultString+=results.get(i);
             }
-            textViewLogs.setText(resultString);
+            textViewLogs.setText("语音识别："+resultString);
         }
     }
 
@@ -195,25 +204,25 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         buttonUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                textViewLogs.setText("上");
             }
         });
         buttonDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                textViewLogs.setText("下");
             }
         });
         buttonLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                textViewLogs.setText("左");
             }
         });
         buttonRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                textViewLogs.setText("右");
             }
         });
     }

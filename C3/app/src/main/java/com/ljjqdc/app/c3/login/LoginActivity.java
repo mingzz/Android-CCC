@@ -85,7 +85,6 @@ public class LoginActivity extends Activity {
         buttonTour = (Button)findViewById(R.id.buttonTour);
 
         layoutConnectBluetooth.setVisibility(View.GONE);
-
     }
 
     private void initListener(){
