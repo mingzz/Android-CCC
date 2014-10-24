@@ -37,7 +37,7 @@ public class DemoPath extends View {
     private void init(){
         mPaint = new Paint();//创建画笔渲染对象
         mPaint.setAntiAlias(true);//设置抗锯齿，让绘画比较平滑
-        mPaint.setDither(true);//设置递色
+        //mPaint.setDither(true);//设置递色
         mPaint.setColor(0xFFFF0000);//设置画笔的颜色
         mPaint.setStyle(Paint.Style.STROKE);//画笔的类型有三种（1.FILL 2.FILL_AND_STROKE 3.STROKE ）
         mPaint.setStrokeJoin(Paint.Join.ROUND);//默认类型是MITER（1.BEVEL 2.MITER 3.ROUND ）

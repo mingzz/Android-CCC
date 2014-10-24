@@ -35,6 +35,7 @@ import com.bairuitech.anychat.AnyChatCoreSDK;
 import com.bairuitech.anychat.AnyChatDefine;
 import com.ljjqdc.app.c3.R;
 import com.ljjqdc.app.c3.setting.ConfigEntity;
+import com.ljjqdc.app.c3.utils.BluetoothUtil;
 import com.ljjqdc.app.c3.utils.DataUtil;
 import com.ljjqdc.app.c3.utils.DemoPath;
 
@@ -61,25 +62,27 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
     private FrameLayout layout3;//视频层
     private SurfaceView surfaceViewMe;
     private SurfaceView surfaceViewOther;
-    private ImageView imageViewSwitchCamera;
+    private ImageButton buttonSwitchCamera;
     private boolean isAnyChatOnline = false;
     private boolean isAnyChatChatting = false;
     private List<RoleInfo> roleInfoList;
     private int otherUserId;//对面的人的user id
 
     //voice recognizer
-    private Button buttonVoiceRecognizer;
+    private ImageButton buttonVoiceRecognizer;
 
     //按钮控制
     private RelativeLayout layout2;//按钮层
-    private Button buttonUp;
-    private Button buttonDown;
-    private Button buttonLeft;
-    private Button buttonRight;
+    private ImageButton buttonUp;
+    private ImageButton buttonDown;
+    private ImageButton buttonLeft;
+    private ImageButton buttonRight;
 
     //划屏控制
-    private boolean useGesture = false;
+    private FrameLayout layout4;
     private DemoPath demoPathGesture;
+    private ImageButton buttonRubbish;
+    private boolean useGesture = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +97,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         initAnyChatSDK();
 
         initButtonController();
+        initGestureController();
 
         initVoiceRecognizer();
 
@@ -111,7 +115,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
 
         textViewLogs = (TextView)findViewById(R.id.textViewLogs);
 
-        demoPathGesture = (DemoPath) findViewById(R.id.demoPathGesture);
+
 
         /**
          * check状态改变，layout会不同
@@ -134,11 +138,11 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
                 useGesture = b;
                 if(b){
                     textViewLogs.setText("可以划屏控制哦~");
-                    demoPathGesture.setVisibility(View.VISIBLE);
+                    layout4.setVisibility(View.VISIBLE);
                 }else{
                     textViewLogs.setText("划屏控制取消");
                     demoPathGesture.clearAll();
-                    demoPathGesture.setVisibility(View.GONE);
+                    layout4.setVisibility(View.GONE);
                 }
             }
         });
@@ -170,7 +174,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
      * 语音识别
      */
     private void initVoiceRecognizer(){
-        buttonVoiceRecognizer = (Button)findViewById(R.id.btn_voice_recognizer);
+        buttonVoiceRecognizer = (ImageButton)findViewById(R.id.btn_voice_recognizer);
 
         buttonVoiceRecognizer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -206,10 +210,10 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
      */
     private void initButtonController(){
         layout2 = (RelativeLayout)findViewById(R.id.layout2);
-        buttonUp = (Button)findViewById(R.id.buttonUp);
-        buttonDown = (Button)findViewById(R.id.buttonDown);
-        buttonLeft = (Button)findViewById(R.id.buttonLeft);
-        buttonRight = (Button)findViewById(R.id.buttonRight);
+        buttonUp = (ImageButton)findViewById(R.id.buttonUp);
+        buttonDown = (ImageButton)findViewById(R.id.buttonDown);
+        buttonLeft = (ImageButton)findViewById(R.id.buttonLeft);
+        buttonRight = (ImageButton)findViewById(R.id.buttonRight);
 
         layout2.setVisibility(View.GONE);
         buttonUp.setOnClickListener(new View.OnClickListener() {
@@ -241,6 +245,21 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
     /**
      * 手势划屏控制
      */
+    private void initGestureController(){
+        layout4 = (FrameLayout)findViewById(R.id.layout4);
+        demoPathGesture = (DemoPath) findViewById(R.id.demoPathGesture);
+        buttonRubbish = (ImageButton)findViewById(R.id.buttonRubbish);
+
+        layout4.setVisibility(View.GONE);
+
+        buttonRubbish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                demoPathGesture.clearAll();
+            }
+        });
+    }
+
     private GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener(){
         @Override
         public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent2, float v, float v2) {
@@ -270,7 +289,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
      */
     private void initAnyChatView(){
         layout3 = (FrameLayout)findViewById(R.id.layout3);
-        imageViewSwitchCamera = (ImageView)findViewById(R.id.ImgSwichVideo);
+        buttonSwitchCamera = (ImageButton)findViewById(R.id.ImgSwichVideo);
 
         layout3.setVisibility(View.GONE);
     }
@@ -353,7 +372,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         anyChatSDK.mSensorHelper.InitSensor(this);
         AnyChatCoreSDK.mCameraHelper.SetContext(this);
 
-        imageViewSwitchCamera.setOnClickListener(new View.OnClickListener() {
+        buttonSwitchCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // 如果是采用Java视频采集，则在Java层进行摄像头切换

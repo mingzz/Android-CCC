@@ -20,6 +20,8 @@ import java.util.UUID;
  * Created by jingjing on 2014/10/22.
  */
 public class BluetoothUtil {
+    public BluetoothUtil bluetoothUtil;
+
     public static boolean HAS_BLUETOOTH = false;//"找不到蓝牙设备"
     public static boolean BLUETOOTH_OPEN = false;//"等待用户开启蓝牙设备"
     public static boolean SERVER_OPEN = false;//服务器端开启

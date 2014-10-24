@@ -15,8 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.bairuitech.demo.ScreenInfo;
-
 public class ConfigActivity extends Activity{
 	private LinearLayout fullLayout;
 	private LinearLayout mainLayout;

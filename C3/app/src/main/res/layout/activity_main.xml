@@ -5,7 +5,6 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-
     <!--视频聊天显示层-->
     <FrameLayout
         android:id="@+id/layout3"
@@ -40,16 +39,37 @@
                     android:layout_weight="1" />
             </LinearLayout>
         </FrameLayout>
-
-        <ImageView
+        <ImageButton
             android:id="@+id/ImgSwichVideo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_gravity="bottom|right"
-            android:src="@drawable/switchvideo"
-            android:background="@drawable/btn_switchvideo_bg"/>
+            android:background="@drawable/btn_cab_done_ljjtest"
+            android:src="@drawable/button_camera"/>
     </FrameLayout>
 
+    <!--划屏控制层-->
+    <FrameLayout
+        android:id="@+id/layout4"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp">
+
+        <com.ljjqdc.app.c3.utils.DemoPath
+            android:id="@+id/demoPathGesture"
+            android:alpha="0.1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
+        <ImageButton
+            android:id="@+id/buttonRubbish"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="right"
+            android:src="@drawable/button_rubbish"
+            android:background="@drawable/btn_cab_done_ljjtest"/>
+    </FrameLayout>
 
     <!--按钮控制层-->
     <RelativeLayout
@@ -58,43 +78,43 @@
         android:layout_height="fill_parent"
         android:layout_marginTop="30dp"
         android:layout_marginBottom="30dp">
-        <Button
+        <ImageButton
             android:id="@+id/buttonUp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="6dp"
             android:layout_centerHorizontal="true"
-            android:text="上"/>
-        <Button
+            android:src="@drawable/button_up"
+            android:background="@drawable/btn_cab_done_ljjtest"
+            android:layout_above="@+id/buttonDown" />
+        <ImageButton
             android:id="@+id/buttonDown"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="6dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:text="下"/>
-        <Button
+            android:src="@drawable/button_down"
+            android:background="@drawable/btn_cab_done_ljjtest"/>
+        <ImageButton
             android:id="@+id/buttonLeft"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:text="左"/>
-        <Button
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="6dp"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/button_left"
+            android:background="@drawable/btn_cab_done_ljjtest"
+            android:layout_toLeftOf="@+id/buttonDown" />
+        <ImageButton
             android:id="@+id/buttonRight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:text="右"/>
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="6dp"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/button_right"
+            android:background="@drawable/btn_cab_done_ljjtest"
+            android:layout_toRightOf="@+id/buttonDown"/>
     </RelativeLayout>
-
-    <!--划屏控制层-->
-    <com.ljjqdc.app.c3.utils.DemoPath
-        android:id="@+id/demoPathGesture"
-        android:visibility="gone"
-        android:alpha="0.1"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
 
     <!--顶层的基本按钮，不会隐藏的-->
     <RelativeLayout
@@ -158,13 +178,14 @@
             android:layout_alignParentBottom="true"
             android:singleLine="true"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/btn_voice_recognizer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="30dp"
-            android:text="识别语音"/>
+            android:src="@drawable/button_voice"
+            android:background="@drawable/btn_cab_done_ljjtest" />
     </RelativeLayout>
 
 </FrameLayout>
