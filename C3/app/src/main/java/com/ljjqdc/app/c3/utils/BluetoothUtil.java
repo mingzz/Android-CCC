@@ -20,7 +20,13 @@ import java.util.UUID;
  * Created by jingjing on 2014/10/22.
  */
 public class BluetoothUtil {
-    public BluetoothUtil bluetoothUtil;
+    private static BluetoothUtil bluetoothUtil;
+    public static void init(Context con){
+        bluetoothUtil = new BluetoothUtil(con);
+    }
+    public static BluetoothUtil getInstance(){
+        return bluetoothUtil;
+    }
 
     public static boolean HAS_BLUETOOTH = false;//"找不到蓝牙设备"
     public static boolean BLUETOOTH_OPEN = false;//"等待用户开启蓝牙设备"
@@ -80,6 +86,8 @@ public class BluetoothUtil {
         }
 
     }
+
+
 
     /**
      * 检测到可连接的蓝牙设备
@@ -212,7 +220,7 @@ public class BluetoothUtil {
      * 发送信息
      */
     public void sendMessage(String outputMessage){//outputMessage = "你想发送的东西";
-        if(!bluetoothSocket.isConnected()){
+        if(!bluetoothSocket.isConnected()){Log.i("ljj","蓝牙设备未连接，发送失败");
             //logs = "蓝牙设备未连接，发送失败";
             return;
         }
@@ -220,7 +228,7 @@ public class BluetoothUtil {
         //利用 BluetoothSocket获取输出流进行输出
         try {
             OutputStream outputStream = bluetoothSocket.getOutputStream();
-            outputStream.write(outputMessage.getBytes());
+            outputStream.write(outputMessage.getBytes());Log.i("ljj","发送成功："+outputMessage);
             //logs = "发送成功："+outputMessage;
         } catch (IOException e) {
             e.printStackTrace();

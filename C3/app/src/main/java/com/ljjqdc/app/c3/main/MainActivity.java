@@ -49,6 +49,9 @@ import java.util.UUID;
 
 public class MainActivity extends Activity implements AnyChatBaseEvent {
 
+    //蓝牙
+    private BluetoothUtil bluetoothUtil;
+
     //基础控件
     //private RelativeLayout layout1;//基础控件层
     private CheckBox checkBoxButton;
@@ -91,7 +94,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
 
         initView();
 
-        //initBlueTooth();
+        initBlueTooth();
 
         initAnyChatView();
         initAnyChatSDK();
@@ -104,6 +107,10 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         textViewLogs.setText("初始化完毕~");
     }
 
+    private void initBlueTooth(){
+        bluetoothUtil = BluetoothUtil.getInstance();
+    }
+
     /**
      * 初始化界面控件显示
      */
@@ -114,8 +121,6 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         checkBoxVideo = (CheckBox)findViewById(R.id.checkBoxVideo);
 
         textViewLogs = (TextView)findViewById(R.id.textViewLogs);
-
-
 
         /**
          * check状态改变，layout会不同

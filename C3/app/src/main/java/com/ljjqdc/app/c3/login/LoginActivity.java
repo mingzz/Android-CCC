@@ -188,7 +188,8 @@ public class LoginActivity extends Activity {
     }
 
     private void initBluetooth(){
-        bluetoothUtil = new BluetoothUtil(this);
+        BluetoothUtil.init(this);
+        bluetoothUtil = BluetoothUtil.getInstance();
         arrayAdapterDevices = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,deviceNames);
         listViewBluetoothDevices.setAdapter(arrayAdapterDevices);
 
