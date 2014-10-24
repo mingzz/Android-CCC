@@ -512,8 +512,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         if (dwErrorCode == 0) {
             textViewLogs.setText("登录成功！");
             Log.i("ljj","登录成功！");
-            int sHourseID = 1;
-            anyChatSDK.EnterRoom(sHourseID, "");
+            anyChatSDK.EnterRoom(DataUtil.roomID, "");
             isAnyChatOnline = true;
         } else {
             textViewLogs.setText("登录失败，错误代码：" + dwErrorCode);
