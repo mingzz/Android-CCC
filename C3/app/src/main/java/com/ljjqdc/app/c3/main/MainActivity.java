@@ -137,6 +137,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
                     demoPathGesture.setVisibility(View.VISIBLE);
                 }else{
                     textViewLogs.setText("划屏控制取消");
+                    demoPathGesture.clearAll();
                     demoPathGesture.setVisibility(View.GONE);
                 }
             }

@@ -85,6 +85,7 @@ public class LoginActivity extends Activity {
         buttonTour = (Button)findViewById(R.id.buttonTour);
 
         layoutConnectBluetooth.setVisibility(View.GONE);
+        editTextUserName.setText(BluetoothAdapter.getDefaultAdapter().getName());
     }
 
     private void initListener(){
@@ -121,7 +122,7 @@ public class LoginActivity extends Activity {
                 String username = editTextUserName.getText().toString();
                 String password = editTextPassword.getText().toString();
 
-                if(username==""||password==""){
+                if(username.equals("")||password.equals("")){
                     Toast.makeText(LoginActivity.this,"用户名或密码输入不完全",Toast.LENGTH_SHORT).show();
                     return;
                 }

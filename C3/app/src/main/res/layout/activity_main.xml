@@ -5,6 +5,7 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+
     <!--视频聊天显示层-->
     <FrameLayout
         android:id="@+id/layout3"
@@ -49,13 +50,6 @@
             android:background="@drawable/btn_switchvideo_bg"/>
     </FrameLayout>
 
-    <!--划屏控制层-->
-    <com.ljjqdc.app.c3.utils.DemoPath
-        android:id="@+id/demoPathGesture"
-        android:visibility="gone"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
-
 
     <!--按钮控制层-->
     <RelativeLayout
@@ -93,6 +87,14 @@
             android:layout_centerVertical="true"
             android:text="右"/>
     </RelativeLayout>
+
+    <!--划屏控制层-->
+    <com.ljjqdc.app.c3.utils.DemoPath
+        android:id="@+id/demoPathGesture"
+        android:visibility="gone"
+        android:alpha="0.1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
 
     <!--顶层的基本按钮，不会隐藏的-->
     <RelativeLayout

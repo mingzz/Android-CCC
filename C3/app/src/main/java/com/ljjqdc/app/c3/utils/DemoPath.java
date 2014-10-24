@@ -30,6 +30,10 @@ public class DemoPath extends View {
         init();
     }
 
+    public void clearAll(){
+        init();
+    }
+
     private void init(){
         mPaint = new Paint();//创建画笔渲染对象
         mPaint.setAntiAlias(true);//设置抗锯齿，让绘画比较平滑
