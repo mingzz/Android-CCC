@@ -36,6 +36,7 @@ import com.bairuitech.anychat.AnyChatDefine;
 import com.ljjqdc.app.c3.R;
 import com.ljjqdc.app.c3.setting.ConfigEntity;
 import com.ljjqdc.app.c3.utils.DataUtil;
+import com.ljjqdc.app.c3.utils.DemoPath;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -78,6 +79,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
 
     //划屏控制
     private boolean useGesture = false;
+    private DemoPath demoPathGesture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +111,8 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
 
         textViewLogs = (TextView)findViewById(R.id.textViewLogs);
 
+        demoPathGesture = (DemoPath) findViewById(R.id.demoPathGesture);
+
         /**
          * check状态改变，layout会不同
          */
@@ -130,8 +134,10 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
                 useGesture = b;
                 if(b){
                     textViewLogs.setText("可以划屏控制哦~");
+                    demoPathGesture.setVisibility(View.VISIBLE);
                 }else{
                     textViewLogs.setText("划屏控制取消");
+                    demoPathGesture.setVisibility(View.GONE);
                 }
             }
         });

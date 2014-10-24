@@ -49,6 +49,13 @@
             android:background="@drawable/btn_switchvideo_bg"/>
     </FrameLayout>
 
+    <!--划屏控制层-->
+    <com.ljjqdc.app.c3.utils.DemoPath
+        android:id="@+id/demoPathGesture"
+        android:visibility="gone"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+
 
     <!--按钮控制层-->
     <RelativeLayout
