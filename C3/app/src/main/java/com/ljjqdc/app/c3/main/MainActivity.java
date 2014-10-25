@@ -339,13 +339,14 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
      */
     private void initGravity(){
         sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-        sensorManager.registerListener(sensorEventListener,sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(sensorEventListener,sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_GAME);
     }
 
     private void cancelGravity(){
         sensorManager.unregisterListener(sensorEventListener);
     }
 
+    private int cnt=0;
     private SensorEventListener sensorEventListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent sensorEvent) {
@@ -353,18 +354,19 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
             float y = sensorEvent.values[SensorManager.DATA_Y];
             float z = sensorEvent.values[SensorManager.DATA_Z];
             Log.i("ljj","Gravity:"+x+" "+y+" "+z);
-            if(x<-4){
-                sendMessage("右");
+            cnt=(cnt+1)%5;
+            if(cnt==0){
+                if(x<-4){
+                    sendMessage("右");
+                }else if(x>4){
+                    sendMessage("左");
+                }else if(y<-4){
+                    sendMessage("前进");
+                }else if(y>4){
+                    sendMessage("后退");
+                }
             }
-            if(x>4){
-                sendMessage("左");
-            }
-            if(z<-4){
-                sendMessage("后退");
-            }
-            if(z>4){
-                sendMessage("前进");
-            }
+
         }
 
         @Override

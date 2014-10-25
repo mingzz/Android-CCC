@@ -52,7 +52,7 @@ public class BluetoothUtil {
     private ClientThread clientThread;
     private ReadThread readThread;
 
-    private static BluetoothSocket bluetoothSocket;
+    private BluetoothSocket bluetoothSocket;
     private BluetoothServerSocket bluetoothServerSocket;
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
@@ -189,12 +189,16 @@ public class BluetoothUtil {
         @Override
         public void run(){
             try {
-                bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord("ljjserver",MY_UUID);
-                bluetoothSocket = bluetoothServerSocket.accept();
-
-                SERVER_OPEN = true;Log.i("ljjbluetooth","server open");
+                bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord("ljjserver",MY_UUID);Log.i("ljjbluetooth","server open");
                 Intent intent = new Intent();
                 intent.setAction(ACTION_SERVER_OPEN);
+                context.sendBroadcast(intent);
+
+                bluetoothSocket = bluetoothServerSocket.accept();
+
+                SERVER_OPEN = true;
+                intent = new Intent();
+                intent.setAction(ACTION_CLIENT_OPEN);
                 context.sendBroadcast(intent);
 
                 readThread = new ReadThread();

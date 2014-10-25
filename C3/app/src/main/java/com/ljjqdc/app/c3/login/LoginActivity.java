@@ -139,6 +139,7 @@ public class LoginActivity extends Activity {
 
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
+                    finish();
                 }else{
                     Toast.makeText(LoginActivity.this,"蓝牙设备未连接",Toast.LENGTH_SHORT).show();
                 }
@@ -152,6 +153,7 @@ public class LoginActivity extends Activity {
                     //作为客户端或者服务器连接上了
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
+                    finish();
                 }else{
                     Toast.makeText(LoginActivity.this,"蓝牙设备未连接",Toast.LENGTH_SHORT).show();
                 }
@@ -191,7 +193,7 @@ public class LoginActivity extends Activity {
             }else if(intent.getAction().equals(BluetoothUtil.ACTION_SERVER_OPEN)){
                 //服务器打开成功
 
-                switchServer.setText("蓝牙连接成功！");
+                switchServer.setText("服务端已打开，正在等待客户端的连接。。。");
                 progressBar.setVisibility(View.GONE);
             }
 
@@ -222,16 +224,13 @@ public class LoginActivity extends Activity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 bluetoothUtil.connectBluetoothDevice(deviceMap.get(deviceNames.get(i)));
                 DataUtil.connectDeviceName = deviceNames.get(i);
-                deviceMap = new HashMap<String, BluetoothDevice>();
-                deviceNames = new ArrayList<String>();
-                arrayAdapterDevices.notifyDataSetChanged();
                 progressBar.setVisibility(View.VISIBLE);
             }
         });
     }
 
     private void startServer(){
-        switchServer.setText("正在等待客户端的连接。。。");
+        switchServer.setText("正在开启服务端。。。");
         bluetoothUtil.startServer();
     }
 
