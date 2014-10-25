@@ -51,7 +51,7 @@ public class BluetoothUtil {
     private ClientThread clientThread;
     private ReadThread readThread;
 
-    private BluetoothSocket bluetoothSocket;
+    private static BluetoothSocket bluetoothSocket;
     private BluetoothServerSocket bluetoothServerSocket;
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
@@ -245,7 +245,7 @@ public class BluetoothUtil {
     public void sendMessage(String outputMessage){
         if(bluetoothSocket==null){Log.i("ljj","蓝牙设备未连接，发送失败");
             //logs = "蓝牙设备未连接，发送失败";
-            return;
+            //return;
         }
 
         //利用 BluetoothSocket获取输出流进行输出
