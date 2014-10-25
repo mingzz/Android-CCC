@@ -95,14 +95,12 @@ public class LoginActivity extends Activity {
                 if(b){
                     //作为客户端
                     layoutConnectBluetooth.setVisibility(View.VISIBLE);
-                    textViewStatus.setText("");
 
                     finishSever();//关闭服务器
                     startClient();//开启客户端
                 }else{
                     //作为服务器
                     layoutConnectBluetooth.setVisibility(View.GONE);
-                    textViewStatus.setText("");
 
                     finishClient();//关闭客户端
                     startServer();//开启服务器
@@ -173,9 +171,11 @@ public class LoginActivity extends Activity {
             }else if(intent.getAction().equals(BluetoothUtil.ACTION_CLIENT_OPEN)){
                 //客户端成功连接一台设备
                 textViewStatus.setText("蓝牙连接成功！");
+            }else if(intent.getAction().equals(BluetoothUtil.ACTION_CLIENT_ERROR)){
+                textViewStatus.setText("蓝牙连接失败，请重试");
             }else if(intent.getAction().equals(BluetoothUtil.ACTION_SERVER_OPEN)){
                 //服务器打开成功
-                textViewStatus.setText("服务器打开啦");
+                textViewStatus.setText("蓝牙连接成功！");
             }
 
         }
@@ -195,6 +195,7 @@ public class LoginActivity extends Activity {
 
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         intentFilter.addAction(BluetoothUtil.ACTION_CLIENT_OPEN);
+        intentFilter.addAction(BluetoothUtil.ACTION_CLIENT_ERROR);
         intentFilter.addAction(BluetoothUtil.ACTION_SERVER_OPEN);
         registerReceiver(bluetoothReceiver, intentFilter);
 
@@ -209,6 +210,7 @@ public class LoginActivity extends Activity {
     }
 
     private void startServer(){
+        textViewStatus.setText("正在等待客户端的连接。。。");
         bluetoothUtil.startServer();
     }
 
@@ -217,6 +219,7 @@ public class LoginActivity extends Activity {
     }
 
     private void startClient(){
+        textViewStatus.setText("正在搜寻服务端。。。");
         deviceMap = new HashMap<String, BluetoothDevice>();
         deviceNames = new ArrayList<String>();
         arrayAdapterDevices = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,deviceNames);

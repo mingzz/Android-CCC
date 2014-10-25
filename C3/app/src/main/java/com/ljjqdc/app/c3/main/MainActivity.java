@@ -5,7 +5,10 @@ import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.media.Image;
 import android.os.Bundle;
@@ -109,7 +112,19 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
 
     private void initBlueTooth(){
         bluetoothUtil = BluetoothUtil.getInstance();
+
+        IntentFilter intentFilter = new IntentFilter(BluetoothUtil.ACTION_RECEIVE_MESSAGE);
+        registerReceiver(inputStreamReceiver,intentFilter);
     }
+
+    private BroadcastReceiver inputStreamReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String s = intent.getStringExtra("receiveMsg");
+            textViewLogs.setText(s);
+            Toast.makeText(MainActivity.this,s,Toast.LENGTH_SHORT).show();
+        }
+    };
 
     /**
      * 初始化界面控件显示
@@ -270,7 +285,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent2, float v, float v2) {
             if(useGesture){
                 if (motionEvent.getX() - motionEvent2.getX() > 100 && Math.abs(v) > 50) {
-                    textViewLogs.setText("左");
+                    textViewLogs.setText("左");bluetoothUtil.sendMessage("0");
                 }else if(motionEvent2.getX() - motionEvent.getX() > 100 && Math.abs(v) > 50){
                     textViewLogs.setText("右");
                 }else if(motionEvent2.getY() - motionEvent.getY() > 100 && Math.abs(v) > 50){
@@ -512,6 +527,8 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
 
     @Override
     public void onDestroy(){
+        unregisterReceiver(inputStreamReceiver);
+
         anyChatSDK.Logout();
         anyChatSDK.Release();
         isAnyChatOnline = false;

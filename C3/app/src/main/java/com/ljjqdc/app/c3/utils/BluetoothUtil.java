@@ -9,9 +9,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Message;
 import android.util.Log;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Set;
 import java.util.UUID;
@@ -35,6 +37,8 @@ public class BluetoothUtil {
 
     public static final String ACTION_SERVER_OPEN = "com.ljjqdc.app.c3.utils.BluetoothUtil.server_open";
     public static final String ACTION_CLIENT_OPEN = "com.ljjqdc.app.c3.utils.BluetoothUtil.client_open";
+    public static final String ACTION_CLIENT_ERROR = "com.ljjqdc.app.c3.utils.BluetoothUtil.client_error";
+    public static final String ACTION_RECEIVE_MESSAGE = "com.ljjqdc.app.c3.utils.BluetoothUtil.receive_message";
 
     private Context context;
 
@@ -45,6 +49,7 @@ public class BluetoothUtil {
 
     private ServerThread serverThread;
     private ClientThread clientThread;
+    private ReadThread readThread;
 
     private BluetoothSocket bluetoothSocket;
     private BluetoothServerSocket bluetoothServerSocket;
@@ -119,6 +124,10 @@ public class BluetoothUtil {
             serverThread.interrupt();
             serverThread = null;
         }
+        if(readThread!=null){
+            readThread.interrupt();
+            readThread = null;
+        }
         if(bluetoothServerSocket!=null){
             try {
                 bluetoothServerSocket.close();
@@ -160,6 +169,10 @@ public class BluetoothUtil {
             clientThread.interrupt();
             clientThread = null;
         }
+        if(readThread!=null){
+            readThread.interrupt();
+            readThread = null;
+        }
         if(bluetoothSocket!=null){
             try {
                 bluetoothSocket.close();
@@ -176,12 +189,15 @@ public class BluetoothUtil {
         public void run(){
             try {
                 bluetoothServerSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord("ljjserver",MY_UUID);
-                //bluetoothSocket = bluetoothServerSocket.accept();
-                SERVER_OPEN = true;Log.i("ljjbluetooth","server open");
+                bluetoothSocket = bluetoothServerSocket.accept();
 
+                SERVER_OPEN = true;Log.i("ljjbluetooth","server open");
                 Intent intent = new Intent();
                 intent.setAction(ACTION_SERVER_OPEN);
                 context.sendBroadcast(intent);
+
+                readThread = new ReadThread();
+                readThread.start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -204,8 +220,15 @@ public class BluetoothUtil {
                 Intent intent = new Intent();
                 intent.setAction(ACTION_CLIENT_OPEN);
                 context.sendBroadcast(intent);
+
+                readThread = new ReadThread();
+                readThread.start();
             } catch (IOException e) {
                 Log.i("ljjbluetooth","蓝牙连接失败!"+e.toString());
+                Intent intent = new Intent();
+                intent.setAction(ACTION_CLIENT_ERROR);
+                context.sendBroadcast(intent);
+
                 e.printStackTrace();
                 try {
                     bluetoothSocket.close();
@@ -219,8 +242,8 @@ public class BluetoothUtil {
     /**
      * 发送信息
      */
-    public void sendMessage(String outputMessage){//outputMessage = "你想发送的东西";
-        if(!bluetoothSocket.isConnected()){Log.i("ljj","蓝牙设备未连接，发送失败");
+    public void sendMessage(String outputMessage){
+        if(bluetoothSocket==null){Log.i("ljj","蓝牙设备未连接，发送失败");
             //logs = "蓝牙设备未连接，发送失败";
             return;
         }
@@ -232,6 +255,43 @@ public class BluetoothUtil {
             //logs = "发送成功："+outputMessage;
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * 读取数据
+     */
+    public class ReadThread extends Thread{
+        @Override
+        public void run(){
+            byte[] buffer = new byte[1024];
+            int bytes;
+            InputStream inputStream = null;
+
+            try{
+                inputStream = bluetoothSocket.getInputStream();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+
+            while (true){
+                try {
+                    if((bytes=inputStream.read(buffer))>0){
+                        byte[] buffer_data = new byte[bytes];
+                        for(int i=0;i<bytes;++i){
+                            buffer_data[i]=buffer[i];
+                        }
+                        String s = new String(buffer_data);
+                        //输出s
+                        Intent intent = new Intent();
+                        intent.setAction(ACTION_RECEIVE_MESSAGE);
+                        intent.putExtra("receiveMsg",s);
+                        context.sendBroadcast(intent);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
