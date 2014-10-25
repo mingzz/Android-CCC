@@ -44,6 +44,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="bottom|right"
+            android:layout_marginBottom="30dp"
             android:background="@drawable/btn_cab_done_ljjtest"
             android:src="@drawable/button_camera"/>
     </FrameLayout>
@@ -127,48 +128,24 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <LinearLayout
+            <CheckBox
+                android:id="@+id/checkBoxButton"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="horizontal">
-                <CheckBox
-                    android:id="@+id/checkBoxButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="按钮控制"/>
-            </LinearLayout>
-            <LinearLayout
+                android:layout_height="wrap_content"
+                android:text="按钮控制" />
+            <CheckBox
+                android:id="@+id/checkBoxGesture"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="horizontal">
-                <CheckBox
-                    android:id="@+id/checkBoxGesture"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="手势控制"/>
-            </LinearLayout>
-            <LinearLayout
+                android:layout_height="wrap_content"
+                android:text="手势控制" />
+            <CheckBox
+                android:id="@+id/checkBoxGravity"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="horizontal">
-                <CheckBox
-                    android:id="@+id/checkBoxVideo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="视频控制"/>
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                android:text="重力感应" />
         </LinearLayout>
 
         <TextView
@@ -178,6 +155,13 @@
             android:layout_alignParentBottom="true"
             android:singleLine="true"/>
 
+        <CheckBox
+            android:id="@+id/checkBoxVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:text="视频控制"/>
         <ImageButton
             android:id="@+id/btn_voice_recognizer"
             android:layout_width="48dp"

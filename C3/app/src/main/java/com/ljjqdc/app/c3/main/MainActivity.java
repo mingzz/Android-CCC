@@ -10,6 +10,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.media.Image;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -60,6 +64,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
     private CheckBox checkBoxButton;
     private CheckBox checkBoxGesture;
     private CheckBox checkBoxVideo;
+    private CheckBox checkBoxGravity;
     private TextView textViewLogs;
 
     //AnyChat
@@ -89,6 +94,9 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
     private DemoPath demoPathGesture;
     private ImageButton buttonRubbish;
     private boolean useGesture = false;
+
+    //重力感应
+    private SensorManager sensorManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,6 +153,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         checkBoxButton = (CheckBox)findViewById(R.id.checkBoxButton);
         checkBoxGesture = (CheckBox)findViewById(R.id.checkBoxGesture);
         checkBoxVideo = (CheckBox)findViewById(R.id.checkBoxVideo);
+        checkBoxGravity = (CheckBox)findViewById(R.id.checkBoxGravity);
 
         textViewLogs = (TextView)findViewById(R.id.textViewLogs);
 
@@ -196,6 +205,16 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
                         surfaceViewMe.setVisibility(View.GONE);
                     }
                     textViewLogs.setText("视频关闭啦~");
+                }
+            }
+        });
+        checkBoxGravity.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b){
+                    initGravity();
+                }else{
+                    cancelGravity();
                 }
             }
         });
@@ -313,6 +332,51 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         gestureDetector.onTouchEvent(ev);
         return super.dispatchTouchEvent(ev);
+    }
+
+    /**
+     * 重力感应
+     */
+    private void initGravity(){
+        sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+        sensorManager.registerListener(sensorEventListener,sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    private void cancelGravity(){
+        sensorManager.unregisterListener(sensorEventListener);
+    }
+
+    private SensorEventListener sensorEventListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent sensorEvent) {
+            float x = sensorEvent.values[SensorManager.DATA_X];
+            float y = sensorEvent.values[SensorManager.DATA_Y];
+            float z = sensorEvent.values[SensorManager.DATA_Z];
+            Log.i("ljj","Gravity:"+x+" "+y+" "+z);
+            if(x<-4){
+                sendMessage("右");
+            }
+            if(x>4){
+                sendMessage("左");
+            }
+            if(z<-4){
+                sendMessage("后退");
+            }
+            if(z>4){
+                sendMessage("前进");
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int i) {
+
+        }
+    };
+
+    @Override
+    public void onPause(){
+        cancelGravity();
+        super.onPause();
     }
 
     /**
