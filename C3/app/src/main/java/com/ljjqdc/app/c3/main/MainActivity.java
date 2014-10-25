@@ -110,6 +110,9 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         textViewLogs.setText("初始化完毕~");
     }
 
+    /**
+     * 初始化蓝牙
+     */
     private void initBlueTooth(){
         bluetoothUtil = BluetoothUtil.getInstance();
 
@@ -125,6 +128,14 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
             Toast.makeText(MainActivity.this,s,Toast.LENGTH_SHORT).show();
         }
     };
+
+    /**
+     * 蓝牙通信，向别的设备发信息
+     */
+    private void sendMessage(String s){
+        textViewLogs.setText(s);
+        bluetoothUtil.sendMessage(s);
+    }
 
     /**
      * 初始化界面控件显示
@@ -221,7 +232,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
             for(int i=0;i<results.size();++i){
                 resultString+=results.get(i);
             }
-            textViewLogs.setText("语音识别："+resultString);
+            sendMessage(resultString);
         }
     }
 
@@ -239,25 +250,25 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         buttonUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                textViewLogs.setText("上");
+                sendMessage("前进");
             }
         });
         buttonDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                textViewLogs.setText("下");
+                sendMessage("后退");
             }
         });
         buttonLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                textViewLogs.setText("左");
+                sendMessage("左");
             }
         });
         buttonRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                textViewLogs.setText("右");
+                sendMessage("右");
             }
         });
     }
@@ -285,13 +296,13 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent2, float v, float v2) {
             if(useGesture){
                 if (motionEvent.getX() - motionEvent2.getX() > 100 && Math.abs(v) > 50) {
-                    textViewLogs.setText("左");bluetoothUtil.sendMessage("0");
+                    sendMessage("左");
                 }else if(motionEvent2.getX() - motionEvent.getX() > 100 && Math.abs(v) > 50){
-                    textViewLogs.setText("右");
+                    sendMessage("右");
                 }else if(motionEvent2.getY() - motionEvent.getY() > 100 && Math.abs(v) > 50){
-                    textViewLogs.setText("下");
+                    sendMessage("后退");
                 }else if(motionEvent.getY() - motionEvent2.getY() > 100 && Math.abs(v) > 50){
-                    textViewLogs.setText("上");
+                    sendMessage("前进");
                 }
             }
             return super.onFling(motionEvent,motionEvent2,v,v2);

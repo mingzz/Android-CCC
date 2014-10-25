@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Message;
 import android.util.Log;
+import android.widget.EditText;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -277,7 +278,7 @@ public class BluetoothUtil {
             while (true){
                 try {
                     if((bytes=inputStream.read(buffer))>0){
-                        byte[] buffer_data = new byte[bytes];
+                        byte[] buffer_data = new byte[bytes+1];
                         for(int i=0;i<bytes;++i){
                             buffer_data[i]=buffer[i];
                         }

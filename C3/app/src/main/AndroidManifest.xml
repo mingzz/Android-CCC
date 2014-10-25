@@ -22,7 +22,8 @@
         <!--登录-->
         <activity
             android:name=".login.LoginActivity"
-            android:label="@string/title_activity_login" >
+            android:label="@string/title_activity_login"
+            android:configChanges="keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

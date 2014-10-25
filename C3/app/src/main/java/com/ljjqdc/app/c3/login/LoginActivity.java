@@ -19,6 +19,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,11 +41,12 @@ import java.util.Set;
 public class LoginActivity extends Activity {
 
     //bluetooth
-    private Switch switchServerOrClient;
+    private Switch switchServer;
+    private Switch switchClient;
     private LinearLayout layoutConnectBluetooth;
-    private TextView textViewStatus;
     private ListView listViewBluetoothDevices;
     private Button buttonReScanDevices;
+    private ProgressBar progressBar;
     private ArrayAdapter<String> arrayAdapterDevices;
 
     private BluetoothUtil bluetoothUtil;
@@ -67,12 +69,12 @@ public class LoginActivity extends Activity {
         initListener();
 
         initBluetooth();
-        startServer();
     }
 
     private void initView(){
-        switchServerOrClient = (Switch)findViewById(R.id.switchSeverOrClient);
-        textViewStatus = (TextView)findViewById(R.id.textViewStatus);
+        switchServer = (Switch)findViewById(R.id.switchSever);
+        switchClient = (Switch)findViewById(R.id.switchClient);
+        progressBar = (ProgressBar)findViewById(R.id.progressBar);
 
         layoutConnectBluetooth = (LinearLayout)findViewById(R.id.layoutConnectBluetooth);
         listViewBluetoothDevices = (ListView)findViewById(R.id.listViewBluetoothDevices);
@@ -89,21 +91,25 @@ public class LoginActivity extends Activity {
     }
 
     private void initListener(){
-        switchServerOrClient.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        switchServer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b){
-                    //作为客户端
-                    layoutConnectBluetooth.setVisibility(View.VISIBLE);
-
+                    startServer();//开启服务器
+                }else{
                     finishSever();//关闭服务器
+                }
+            }
+        });
+        switchClient.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b){
+                    layoutConnectBluetooth.setVisibility(View.VISIBLE);
                     startClient();//开启客户端
                 }else{
-                    //作为服务器
                     layoutConnectBluetooth.setVisibility(View.GONE);
-
                     finishClient();//关闭客户端
-                    startServer();//开启服务器
                 }
             }
         });
@@ -112,6 +118,7 @@ public class LoginActivity extends Activity {
             @Override
             public void onClick(View view) {
                 startClient();
+                buttonReScanDevices.setVisibility(View.GONE);
             }
         });
         buttonLogin.setOnClickListener(new View.OnClickListener() {
@@ -167,15 +174,25 @@ public class LoginActivity extends Activity {
                 //arrayAdapterDevices.notifyDataSetChanged();
                 arrayAdapterDevices = new ArrayAdapter<String>(LoginActivity.this,android.R.layout.simple_list_item_1,deviceNames);
                 listViewBluetoothDevices.setAdapter(arrayAdapterDevices);
-                textViewStatus.setText("找到以下设备，点击连接");
+
+                switchClient.setText("找到以下设备，点击连接");
+                buttonReScanDevices.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
             }else if(intent.getAction().equals(BluetoothUtil.ACTION_CLIENT_OPEN)){
                 //客户端成功连接一台设备
-                textViewStatus.setText("蓝牙连接成功！");
+
+                switchClient.setText("蓝牙连接成功！");
+                progressBar.setVisibility(View.GONE);
             }else if(intent.getAction().equals(BluetoothUtil.ACTION_CLIENT_ERROR)){
-                textViewStatus.setText("蓝牙连接失败，请重试");
+
+                switchClient.setText("蓝牙连接超时，请重试");
+                buttonReScanDevices.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
             }else if(intent.getAction().equals(BluetoothUtil.ACTION_SERVER_OPEN)){
                 //服务器打开成功
-                textViewStatus.setText("蓝牙连接成功！");
+
+                switchServer.setText("蓝牙连接成功！");
+                progressBar.setVisibility(View.GONE);
             }
 
         }
@@ -205,21 +222,28 @@ public class LoginActivity extends Activity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 bluetoothUtil.connectBluetoothDevice(deviceMap.get(deviceNames.get(i)));
                 DataUtil.connectDeviceName = deviceNames.get(i);
+                deviceMap = new HashMap<String, BluetoothDevice>();
+                deviceNames = new ArrayList<String>();
+                arrayAdapterDevices.notifyDataSetChanged();
+                progressBar.setVisibility(View.VISIBLE);
             }
         });
     }
 
     private void startServer(){
-        textViewStatus.setText("正在等待客户端的连接。。。");
+        switchServer.setText("正在等待客户端的连接。。。");
         bluetoothUtil.startServer();
     }
 
     private void finishSever(){
+        switchServer.setText("点击开启服务端");
         bluetoothUtil.finishServer();
     }
 
     private void startClient(){
-        textViewStatus.setText("正在搜寻服务端。。。");
+        switchClient.setText("正在搜寻服务端。。。");
+        progressBar.setVisibility(View.VISIBLE);
+
         deviceMap = new HashMap<String, BluetoothDevice>();
         deviceNames = new ArrayList<String>();
         arrayAdapterDevices = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,deviceNames);
@@ -228,6 +252,8 @@ public class LoginActivity extends Activity {
     }
 
     private void finishClient(){
+        switchClient.setText("点击开启客户端");
+
         bluetoothUtil.finishClient();
     }
 }

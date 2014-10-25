@@ -1,38 +1,55 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:orientation="vertical"
     tools:context="com.ljjqdc.app.c3.login.LoginActivity">
 
     <Switch
-        android:id="@+id/switchSeverOrClient"
+        android:id="@+id/switchSever"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_margin="5dp"
         android:checked="false"
-        android:textOff="服务器"
-        android:textOn="客户端"/>
-    <TextView
-        android:id="@+id/textViewStatus"
+        android:text="点击开启服务端"
+        android:textOff="OFF"
+        android:textOn="ON"/>
+    <Switch
+        android:id="@+id/switchClient"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp" />
+        android:layout_margin="5dp"
+        android:checked="false"
+        android:text="点击开启客户端"
+        android:textOff="OFF"
+        android:textOn="ON"/>
 
     <LinearLayout
         android:id="@+id/layoutConnectBluetooth"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
         android:orientation="vertical">
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/buttonReScanDevices"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:text="重新扫描附近的蓝牙设备"/>
+        </FrameLayout>
+
         <ListView
             android:id="@+id/listViewBluetoothDevices"
             android:layout_width="fill_parent"
             android:layout_height="150dp"/>
-        <Button
-            android:id="@+id/buttonReScanDevices"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="重新扫描附近的蓝牙设备"/>
         </LinearLayout>
 
     <LinearLayout
@@ -40,7 +57,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:padding="50dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
         android:orientation="vertical">
         <EditText
             android:id="@+id/editTextUserName"
@@ -65,4 +84,4 @@
     </LinearLayout>
 
 
-</RelativeLayout>
+</LinearLayout>
