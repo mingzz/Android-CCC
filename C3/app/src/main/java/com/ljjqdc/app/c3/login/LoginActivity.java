@@ -42,6 +42,7 @@ public class LoginActivity extends Activity {
 
     //bluetooth
     private Switch switchServer;
+    private Switch switchClientWifi;
     private Switch switchClient;
     private LinearLayout layoutConnectBluetooth;
     private ListView listViewBluetoothDevices;
@@ -73,6 +74,7 @@ public class LoginActivity extends Activity {
 
     private void initView(){
         switchServer = (Switch)findViewById(R.id.switchSever);
+        switchClientWifi = (Switch)findViewById(R.id.switchClientWifi);
         switchClient = (Switch)findViewById(R.id.switchClient);
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
 
@@ -98,6 +100,16 @@ public class LoginActivity extends Activity {
                     startServer();//开启服务器
                 }else{
                     finishSever();//关闭服务器
+                }
+            }
+        });
+        switchClientWifi.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b){
+                    startClientWifi();
+                }else {
+                    finishClientWifi();
                 }
             }
         });
@@ -180,20 +192,26 @@ public class LoginActivity extends Activity {
                 switchClient.setText("找到以下设备，点击连接");
                 buttonReScanDevices.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
-            }else if(intent.getAction().equals(BluetoothUtil.ACTION_CLIENT_OPEN)){
+            }else if(intent.getAction().equals(BluetoothUtil.ACTION_BLUETOOTH_CLIENT_OPEN)){
                 //客户端成功连接一台设备
 
                 switchClient.setText("蓝牙连接成功！");
                 progressBar.setVisibility(View.GONE);
-            }else if(intent.getAction().equals(BluetoothUtil.ACTION_CLIENT_ERROR)){
+            }else if(intent.getAction().equals(BluetoothUtil.ACTION_BLUETOOTH_CLIENT_ERROR)){
 
                 switchClient.setText("蓝牙连接超时，请重试");
                 buttonReScanDevices.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
-            }else if(intent.getAction().equals(BluetoothUtil.ACTION_SERVER_OPEN)){
+            }else if(intent.getAction().equals(BluetoothUtil.ACTION_WIFI_CLIENT_OPEN)){
+                switchClientWifi.setText("成功连接另一台手机！");
+                progressBar.setVisibility(View.GONE);
+            }else if(intent.getAction().equals(BluetoothUtil.ACTION_WIFI_CLIENT_ERROR)){
+                switchClientWifi.setText("wifi连接超时，请重试");
+                progressBar.setVisibility(View.GONE);
+            }else if(intent.getAction().equals(BluetoothUtil.ACTION_WIFI_SERVER_OPEN)){
                 //服务器打开成功
 
-                switchServer.setText("服务端已打开，正在等待客户端的连接。。。");
+                switchServer.setText("服务端已打开，正在等待另一台手机的连接。。。");
                 progressBar.setVisibility(View.GONE);
             }
 
@@ -213,9 +231,11 @@ public class LoginActivity extends Activity {
         listViewBluetoothDevices.setAdapter(arrayAdapterDevices);
 
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        intentFilter.addAction(BluetoothUtil.ACTION_CLIENT_OPEN);
-        intentFilter.addAction(BluetoothUtil.ACTION_CLIENT_ERROR);
-        intentFilter.addAction(BluetoothUtil.ACTION_SERVER_OPEN);
+        intentFilter.addAction(BluetoothUtil.ACTION_WIFI_CLIENT_OPEN);
+        intentFilter.addAction(BluetoothUtil.ACTION_WIFI_CLIENT_ERROR);
+        intentFilter.addAction(BluetoothUtil.ACTION_BLUETOOTH_CLIENT_OPEN);
+        intentFilter.addAction(BluetoothUtil.ACTION_BLUETOOTH_CLIENT_ERROR);
+        intentFilter.addAction(BluetoothUtil.ACTION_WIFI_SERVER_OPEN);
         registerReceiver(bluetoothReceiver, intentFilter);
 
         //点击列表项建立连接
@@ -230,13 +250,23 @@ public class LoginActivity extends Activity {
     }
 
     private void startServer(){
-        switchServer.setText("正在开启服务端。。。");
+        switchServer.setText("正在开启wifi服务端。。。");
         bluetoothUtil.startServer();
     }
 
     private void finishSever(){
-        switchServer.setText("点击开启服务端");
+        switchServer.setText("点击开启wifi服务端");
         bluetoothUtil.finishServer();
+    }
+
+    private void startClientWifi(){
+        switchClientWifi.setText("正在开启wifi客户端。。。");
+        bluetoothUtil.connectWifiClient("");
+    }
+
+    private void finishClientWifi(){
+        switchServer.setText("点击开启wifi客户端");
+        bluetoothUtil.finishWifiClient();
     }
 
     private void startClient(){

@@ -142,7 +142,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
      */
     private void sendMessage(String s){
         textViewLogs.setText(s);
-        bluetoothUtil.sendMessage(s);
+        bluetoothUtil.sendMessageViaWifi(s);
     }
 
     /**
@@ -269,25 +269,25 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         buttonUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendMessage("前进");
+                sendMessage("A");
             }
         });
         buttonDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendMessage("后退");
+                sendMessage("B");
             }
         });
         buttonLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendMessage("左");
+                sendMessage("L");
             }
         });
         buttonRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendMessage("右");
+                sendMessage("R");
             }
         });
     }
@@ -315,13 +315,13 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent2, float v, float v2) {
             if(useGesture){
                 if (motionEvent.getX() - motionEvent2.getX() > 100 && Math.abs(v) > 50) {
-                    sendMessage("左");
+                    sendMessage("L");
                 }else if(motionEvent2.getX() - motionEvent.getX() > 100 && Math.abs(v) > 50){
-                    sendMessage("右");
+                    sendMessage("R");
                 }else if(motionEvent2.getY() - motionEvent.getY() > 100 && Math.abs(v) > 50){
-                    sendMessage("后退");
+                    sendMessage("B");
                 }else if(motionEvent.getY() - motionEvent2.getY() > 100 && Math.abs(v) > 50){
-                    sendMessage("前进");
+                    sendMessage("A");
                 }
             }
             return super.onFling(motionEvent,motionEvent2,v,v2);
@@ -357,13 +357,13 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
             cnt=(cnt+1)%5;
             if(cnt==0){
                 if(x<-4){
-                    sendMessage("右");
+                    sendMessage("R");
                 }else if(x>4){
-                    sendMessage("左");
+                    sendMessage("L");
                 }else if(y<-4){
-                    sendMessage("前进");
+                    sendMessage("A");
                 }else if(y>4){
-                    sendMessage("后退");
+                    sendMessage("B");
                 }
             }
 

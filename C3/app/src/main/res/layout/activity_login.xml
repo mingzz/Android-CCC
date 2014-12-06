@@ -11,7 +11,16 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:checked="false"
-        android:text="点击开启服务端"
+        android:text="点击开启Wifi服务端"
+        android:textOff="OFF"
+        android:textOn="ON"/>
+    <Switch
+        android:id="@+id/switchClientWifi"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:checked="false"
+        android:text="点击开启Wifi客户端"
         android:textOff="OFF"
         android:textOn="ON"/>
     <Switch
@@ -20,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:checked="false"
-        android:text="点击开启客户端"
+        android:text="点击开启蓝牙客户端"
         android:textOff="OFF"
         android:textOn="ON"/>
 
