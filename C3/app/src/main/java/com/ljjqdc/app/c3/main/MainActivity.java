@@ -57,12 +57,17 @@ import java.util.UUID;
 public class MainActivity extends Activity implements AnyChatBaseEvent {
 
     //发送的数据
-    private final String MSG_UP = "A";
-    private final String MSG_DOWN = "B";
-    private final String MSG_LEFT = "L";
-    private final String MSG_RIGHT = "R";
+    private final String MSG_UP = "w";
+    private final String MSG_DOWN = "s";
+    private final String MSG_LEFT = "q";
+    private final String MSG_RIGHT = "e";
     private final String MSG_UP2 = "zuoji1";
     private final String MSG_DOWN2 = "zuoji2";
+    private final String MSG_ROTATE_LEFT = "";
+    private final String MSG_ROTATE_RIGHT = "";
+    private final String MSG_STOP = "s";
+
+    private final String TAG = "ljjblue";
 
     //蓝牙
     private BluetoothUtil bluetoothUtil;
@@ -98,6 +103,9 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
     private ImageButton buttonRight;
     private ImageButton buttonUp2;
     private ImageButton buttonDown2;
+    private ImageButton buttonRotateLeft;
+    private ImageButton buttonRotateRight;
+    private ImageButton buttonStop;
 
     //划屏控制
     private FrameLayout layout4;
@@ -153,7 +161,13 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
      */
     private void sendMessage(String s){
         textViewLogs.setText(s);
-        bluetoothUtil.sendMessageViaWifi(s);
+        //bluetoothUtil.sendMessageViaWifi(s);
+        final String ss = s;
+        new Thread(){
+            public void run(){
+                bluetoothUtil.sendMessageViaBluetooth(ss);
+            }
+        }.start();
     }
 
     /**
@@ -277,6 +291,9 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         buttonRight = (ImageButton)findViewById(R.id.buttonRight);
         buttonUp2 = (ImageButton)findViewById(R.id.buttonUp2);
         buttonDown2 = (ImageButton)findViewById(R.id.buttonDown2);
+        buttonRotateLeft = (ImageButton)findViewById(R.id.buttonRotateLeft);
+        buttonRotateRight = (ImageButton)findViewById(R.id.buttonRotateRight);
+        buttonStop = (ImageButton)findViewById(R.id.buttonStop);
 
         layout2.setVisibility(View.GONE);
         buttonUp.setOnClickListener(new View.OnClickListener() {
@@ -313,6 +330,24 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
             @Override
             public void onClick(View view) {
                 sendMessage(MSG_DOWN2);
+            }
+        });
+        buttonRotateLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendMessage(MSG_ROTATE_LEFT);
+            }
+        });
+        buttonRotateRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendMessage(MSG_ROTATE_RIGHT);
+            }
+        });
+        buttonStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendMessage(MSG_STOP);
             }
         });
     }
@@ -642,7 +677,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
     public void OnAnyChatConnectMessage(boolean bSuccess) {
         if (!bSuccess) {
             textViewLogs.setText("连接视频通信服务器失败，自动重连，请稍后...");
-            Log.i("ljj","连接视频通信服务器失败，自动重连，请稍后...");
+            Log.i(TAG,"连接视频通信服务器失败，自动重连，请稍后...");
             isAnyChatOnline = false;
             isAnyChatChatting = false;
         }else{
@@ -654,12 +689,12 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
     public void OnAnyChatLoginMessage(int dwUserId, int dwErrorCode) {
         if (dwErrorCode == 0) {
             textViewLogs.setText("登录成功！");
-            Log.i("ljj","登录成功！");
+            Log.i(TAG,"登录成功！");
             anyChatSDK.EnterRoom(DataUtil.roomID, "");
             isAnyChatOnline = true;
         } else {
             textViewLogs.setText("登录失败，错误代码：" + dwErrorCode);
-            Log.i("ljj","登录失败，错误代码：" + dwErrorCode);
+            Log.i(TAG,"登录失败，错误代码：" + dwErrorCode);
             isAnyChatOnline = false;
         }
     }

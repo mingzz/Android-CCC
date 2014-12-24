@@ -25,6 +25,8 @@ import java.util.UUID;
  * Created by jingjing on 2014/10/22.
  */
 public class BluetoothUtil {
+    private String TAG = "ljjblue";
+
     private static BluetoothUtil bluetoothUtil;
     public static void init(Context con){
         bluetoothUtil = new BluetoothUtil(con);
@@ -251,8 +253,11 @@ public class BluetoothUtil {
                 Intent intent = new Intent();
                 intent.setAction(ACTION_WIFI_CLIENT_OPEN);
                 context.sendBroadcast(intent);
+
+                readThread = new ReadThread();
+                readThread.start();
             } catch (IOException e) {
-                e.printStackTrace();Log.i("ljjBluetooth",e.getMessage());
+                e.printStackTrace();Log.i(TAG,e.getMessage());
                 Intent intent = new Intent();
                 intent.setAction(ACTION_WIFI_CLIENT_ERROR);
                 context.sendBroadcast(intent);
@@ -271,16 +276,14 @@ public class BluetoothUtil {
             bluetoothAdapter.cancelDiscovery();
             try {
                 bluetoothSocket.connect();
-                CLIENT_CONNECT = true;Log.i("ljjbluetooth","connect succeed");
+                CLIENT_CONNECT = true;Log.i(TAG,"connect succeed");
 
                 Intent intent = new Intent();
                 intent.setAction(ACTION_BLUETOOTH_CLIENT_OPEN);
                 context.sendBroadcast(intent);
 
-                readThread = new ReadThread();
-                readThread.start();
             } catch (IOException e) {
-                Log.i("ljjbluetooth","蓝牙连接失败!"+e.toString());
+                Log.i(TAG,"蓝牙连接失败!"+e.toString());
                 Intent intent = new Intent();
                 intent.setAction(ACTION_BLUETOOTH_CLIENT_ERROR);
                 context.sendBroadcast(intent);
@@ -300,7 +303,7 @@ public class BluetoothUtil {
      */
     public void sendMessageViaBluetooth(String outputMessage){
         if(bluetoothSocket==null){
-            Log.i("ljjBluetooth","蓝牙设备未连接，发送失败");
+            Log.i(TAG,"蓝牙设备未连接，发送失败");
             //logs = "蓝牙设备未连接，发送失败";
             return;
         }
@@ -309,8 +312,6 @@ public class BluetoothUtil {
         try {
             OutputStream outputStream = bluetoothSocket.getOutputStream();
             outputStream.write(outputMessage.getBytes());
-            Log.i("ljjBluetooth","发送成功："+outputMessage);
-            //logs = "发送成功："+outputMessage;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -321,14 +322,14 @@ public class BluetoothUtil {
      */
     public void sendMessageViaWifi(String outputMessage){
         if(socket==null){
-            Log.i("ljj","未连接另一台手机，发送失败");
+            Log.i(TAG,"未连接另一台手机，发送失败");
             return;
         }
 
         try {
             OutputStream outputStream = socket.getOutputStream();
             outputStream.write(outputMessage.getBytes());
-            Log.i("ljj", "发送成功：" + outputMessage);
+            Log.i(TAG, "发送成功：" + outputMessage);
             outputStream.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -347,8 +348,9 @@ public class BluetoothUtil {
 
             try{
                 inputStream = socket.getInputStream();
-            }catch (IOException e){
+            }catch (Exception e){
                 e.printStackTrace();
+                return;
             }
 
             while (true){

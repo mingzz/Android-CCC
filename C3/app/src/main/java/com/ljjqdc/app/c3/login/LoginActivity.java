@@ -151,8 +151,6 @@ public class LoginActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b){
-                    switchClient.setText("正在搜寻服务端。。。");
-                    progressBar.setVisibility(View.VISIBLE);
                     layoutConnectBluetooth.setVisibility(View.VISIBLE);
                     startClient();//开启客户端
                 }else{
@@ -193,7 +191,7 @@ public class LoginActivity extends Activity {
                     return;
                 }
 
-                if(bluetoothUtil.CLIENT_CONNECT || bluetoothUtil.SERVER_OPEN){
+                //if(bluetoothUtil.CLIENT_CONNECT || bluetoothUtil.SERVER_OPEN){
                     //作为客户端或者服务器连接上了
                     DataUtil.username = username;
                     DataUtil.password = password;
@@ -201,9 +199,9 @@ public class LoginActivity extends Activity {
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();
-                }else{
-                    Toast.makeText(LoginActivity.this,"蓝牙设备未连接",Toast.LENGTH_SHORT).show();
-                }
+                //}else{
+                //    Toast.makeText(LoginActivity.this,"蓝牙设备未连接",Toast.LENGTH_SHORT).show();
+                //}
 
             }
         });
@@ -312,6 +310,8 @@ public class LoginActivity extends Activity {
     }
 
     private void startClient(){
+        switchClient.setText("正在搜寻服务端。。。");
+        progressBar.setVisibility(View.VISIBLE);
         deviceMap = new HashMap<String, BluetoothDevice>();
         deviceNames = new ArrayList<String>();
         arrayAdapterDevices = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,deviceNames);
