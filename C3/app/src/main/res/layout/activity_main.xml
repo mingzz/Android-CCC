@@ -24,29 +24,28 @@
 
             <LinearLayout
                 android:id="@+id/frame_local_area"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="bottom|right"
                 android:orientation="vertical"
                 android:padding="3dip" >
+                <ImageButton
+                    android:id="@+id/ImgSwichVideo"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="30dp"
+                    android:layout_gravity="bottom|right"
+                    android:background="@drawable/btn_cab_done_ljjtest"
+                    android:src="@drawable/button_camera"/>
 
                 <SurfaceView
                     android:id="@+id/surface_local"
                     android:visibility="gone"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dip"
-                    android:layout_gravity="center"
-                    android:layout_weight="1" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
             </LinearLayout>
         </FrameLayout>
-        <ImageButton
-            android:id="@+id/ImgSwichVideo"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="bottom|right"
-            android:layout_marginBottom="30dp"
-            android:background="@drawable/btn_cab_done_ljjtest"
-            android:src="@drawable/button_camera"/>
     </FrameLayout>
 
     <!--划屏控制层-->
@@ -78,43 +77,65 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_marginTop="30dp"
-        android:layout_marginBottom="30dp">
-        <ImageButton
-            android:id="@+id/buttonUp"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_margin="6dp"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/button_up"
-            android:background="@drawable/btn_cab_done_ljjtest"
-            android:layout_above="@+id/buttonDown" />
-        <ImageButton
-            android:id="@+id/buttonDown"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_margin="6dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/button_down"
-            android:background="@drawable/btn_cab_done_ljjtest"/>
-        <ImageButton
-            android:id="@+id/buttonLeft"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_margin="6dp"
-            android:layout_alignParentBottom="true"
-            android:src="@drawable/button_left"
-            android:background="@drawable/btn_cab_done_ljjtest"
-            android:layout_toLeftOf="@+id/buttonDown" />
-        <ImageButton
-            android:id="@+id/buttonRight"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_margin="6dp"
-            android:layout_alignParentBottom="true"
-            android:src="@drawable/button_right"
-            android:background="@drawable/btn_cab_done_ljjtest"
-            android:layout_toRightOf="@+id/buttonDown"/>
+        android:layout_marginBottom="30dp"
+        android:gravity="center_horizontal">
+        <LinearLayout
+            android:id="@+id/layoutButton1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true">
+            <ImageButton
+                android:id="@+id/buttonLeft"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="6dp"
+                android:src="@drawable/button_left"
+                android:background="@drawable/btn_cab_done_ljjtest" />
+            <ImageButton
+                android:id="@+id/buttonDown"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="6dp"
+                android:src="@drawable/button_down"
+                android:background="@drawable/btn_cab_done_ljjtest"/>
+            <ImageButton
+                android:id="@+id/buttonRight"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="6dp"
+                android:src="@drawable/button_right"
+                android:background="@drawable/btn_cab_done_ljjtest"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_above="@id/layoutButton1">
+            <ImageButton
+                android:id="@+id/buttonDown2"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="6dp"
+                android:src="@drawable/button_down2"
+                android:background="@drawable/btn_cab_done_ljjtest"/>
+            <ImageButton
+                android:id="@+id/buttonUp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="6dp"
+                android:src="@drawable/button_up"
+                android:background="@drawable/btn_cab_done_ljjtest"/>
+            <ImageButton
+                android:id="@+id/buttonUp2"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="6dp"
+                android:src="@drawable/button_up2"
+                android:background="@drawable/btn_cab_done_ljjtest"/>
+        </LinearLayout>
+
     </RelativeLayout>
 
     <!--顶层的基本按钮，不会隐藏的-->

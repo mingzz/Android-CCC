@@ -42,6 +42,10 @@ public class LoginActivity extends Activity {
 
     //bluetooth
     private Switch switchServer;
+    private LinearLayout layoutWifiConfirm;
+    private EditText editTextAddress;
+    private EditText editTextPort;
+    private Button buttonWifiConfirm;
     private Switch switchClientWifi;
     private Switch switchClient;
     private LinearLayout layoutConnectBluetooth;
@@ -74,6 +78,11 @@ public class LoginActivity extends Activity {
 
     private void initView(){
         switchServer = (Switch)findViewById(R.id.switchSever);
+        layoutWifiConfirm = (LinearLayout)findViewById(R.id.layoutWifiConfirm);
+        editTextAddress = (EditText)findViewById(R.id.editTextAddress);
+        editTextPort = (EditText)findViewById(R.id.editTextPort);
+        buttonWifiConfirm = (Button)findViewById(R.id.buttonWifiConfirm);
+
         switchClientWifi = (Switch)findViewById(R.id.switchClientWifi);
         switchClient = (Switch)findViewById(R.id.switchClient);
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
@@ -88,6 +97,9 @@ public class LoginActivity extends Activity {
         buttonLogin = (Button)findViewById(R.id.buttonLogin);
         buttonTour = (Button)findViewById(R.id.buttonTour);
 
+        editTextAddress.setText(DataUtil.getSpfString(this,DataUtil.SPF_WIFI_NAME,DataUtil.SPF_WIFI_ADDRESS,""));
+        editTextPort.setText(DataUtil.getSpfString(this,DataUtil.SPF_WIFI_NAME,DataUtil.SPF_WIFI_PORT,""));
+        layoutWifiConfirm.setVisibility(View.GONE);
         layoutConnectBluetooth.setVisibility(View.GONE);
         editTextUserName.setText(BluetoothAdapter.getDefaultAdapter().getName());
     }
@@ -97,9 +109,10 @@ public class LoginActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b){
-                    startServer();//开启服务器
+                    layoutWifiConfirm.setVisibility(View.VISIBLE);
                 }else{
                     finishSever();//关闭服务器
+                    layoutWifiConfirm.setVisibility(View.GONE);
                 }
             }
         });
@@ -123,6 +136,15 @@ public class LoginActivity extends Activity {
                     layoutConnectBluetooth.setVisibility(View.GONE);
                     finishClient();//关闭客户端
                 }
+            }
+        });
+
+        buttonWifiConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DataUtil.setSpfString(LoginActivity.this,DataUtil.SPF_WIFI_NAME,DataUtil.SPF_WIFI_ADDRESS,editTextAddress.getText().toString());
+                DataUtil.setSpfString(LoginActivity.this,DataUtil.SPF_WIFI_NAME,DataUtil.SPF_WIFI_PORT,editTextPort.getText().toString());
+                startServer();//开启服务器
             }
         });
 
@@ -261,7 +283,7 @@ public class LoginActivity extends Activity {
 
     private void startClientWifi(){
         switchClientWifi.setText("正在开启wifi客户端。。。");
-        bluetoothUtil.connectWifiClient("");
+        bluetoothUtil.connectWifiClient();
     }
 
     private void finishClientWifi(){

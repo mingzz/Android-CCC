@@ -45,9 +45,6 @@ public class BluetoothUtil {
     public static final String ACTION_BLUETOOTH_CLIENT_ERROR = "com.ljjqdc.app.c3.utils.BluetoothUtil.bluetooth_client_error";
     public static final String ACTION_RECEIVE_MESSAGE = "com.ljjqdc.app.c3.utils.BluetoothUtil.receive_message";
 
-    public String ADDRESS = "";
-    public int PORT = 4567;
-
     private Context context;
 
     //Bluetooth
@@ -161,8 +158,7 @@ public class BluetoothUtil {
     /**
      * wifi客户端连接
      */
-    public void connectWifiClient(String address){
-        ADDRESS = address;
+    public void connectWifiClient(){
         clientWifiThread = new ClientWifiThread();
         clientWifiThread.start();
     }
@@ -224,7 +220,7 @@ public class BluetoothUtil {
 
                 bluetoothSocket = bluetoothServerSocket.accept();*/
 
-                serverSocket = new ServerSocket(PORT);
+                serverSocket = new ServerSocket(Integer.valueOf(DataUtil.getSpfString(context,DataUtil.SPF_WIFI_NAME,DataUtil.SPF_WIFI_PORT,"")));
                 Intent intent = new Intent();
                 intent.setAction(ACTION_WIFI_SERVER_OPEN);
                 context.sendBroadcast(intent);
@@ -249,7 +245,8 @@ public class BluetoothUtil {
         @Override
         public void run(){
             try {
-                socket = new Socket(ADDRESS, PORT);
+                socket = new Socket(DataUtil.getSpfString(context,DataUtil.SPF_WIFI_NAME,DataUtil.SPF_WIFI_ADDRESS,""),
+                        Integer.valueOf(DataUtil.getSpfString(context,DataUtil.SPF_WIFI_NAME,DataUtil.SPF_WIFI_PORT,"")));
 
                 Intent intent = new Intent();
                 intent.setAction(ACTION_WIFI_CLIENT_OPEN);
@@ -303,7 +300,7 @@ public class BluetoothUtil {
      */
     public void sendMessageViaBluetooth(String outputMessage){
         if(bluetoothSocket==null){
-            Log.i("ljj","蓝牙设备未连接，发送失败");
+            Log.i("ljjBluetooth","蓝牙设备未连接，发送失败");
             //logs = "蓝牙设备未连接，发送失败";
             return;
         }
@@ -312,7 +309,7 @@ public class BluetoothUtil {
         try {
             OutputStream outputStream = bluetoothSocket.getOutputStream();
             outputStream.write(outputMessage.getBytes());
-            Log.i("ljj","发送成功："+outputMessage);
+            Log.i("ljjBluetooth","发送成功："+outputMessage);
             //logs = "发送成功："+outputMessage;
         } catch (IOException e) {
             e.printStackTrace();

@@ -56,6 +56,14 @@ import java.util.UUID;
 
 public class MainActivity extends Activity implements AnyChatBaseEvent {
 
+    //发送的数据
+    private final String MSG_UP = "A";
+    private final String MSG_DOWN = "B";
+    private final String MSG_LEFT = "L";
+    private final String MSG_RIGHT = "R";
+    private final String MSG_UP2 = "zuoji1";
+    private final String MSG_DOWN2 = "zuoji2";
+
     //蓝牙
     private BluetoothUtil bluetoothUtil;
 
@@ -88,6 +96,8 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
     private ImageButton buttonDown;
     private ImageButton buttonLeft;
     private ImageButton buttonRight;
+    private ImageButton buttonUp2;
+    private ImageButton buttonDown2;
 
     //划屏控制
     private FrameLayout layout4;
@@ -132,8 +142,9 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         @Override
         public void onReceive(Context context, Intent intent) {
             String s = intent.getStringExtra("receiveMsg");
-            textViewLogs.setText(s);
-            Toast.makeText(MainActivity.this,s,Toast.LENGTH_SHORT).show();
+            textViewLogs.setText("收到手机消息："+s);
+            bluetoothUtil.sendMessageViaBluetooth(s);
+            Toast.makeText(MainActivity.this,"收到手机消息："+s+"并发送成功",Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -264,30 +275,44 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         buttonDown = (ImageButton)findViewById(R.id.buttonDown);
         buttonLeft = (ImageButton)findViewById(R.id.buttonLeft);
         buttonRight = (ImageButton)findViewById(R.id.buttonRight);
+        buttonUp2 = (ImageButton)findViewById(R.id.buttonUp2);
+        buttonDown2 = (ImageButton)findViewById(R.id.buttonDown2);
 
         layout2.setVisibility(View.GONE);
         buttonUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendMessage("A");
+                sendMessage(MSG_UP);
             }
         });
         buttonDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendMessage("B");
+                sendMessage(MSG_DOWN);
             }
         });
         buttonLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendMessage("L");
+                sendMessage(MSG_LEFT);
             }
         });
         buttonRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendMessage("R");
+                sendMessage(MSG_RIGHT);
+            }
+        });
+        buttonUp2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendMessage(MSG_UP2);
+            }
+        });
+        buttonDown2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendMessage(MSG_DOWN2);
             }
         });
     }
@@ -315,13 +340,13 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent2, float v, float v2) {
             if(useGesture){
                 if (motionEvent.getX() - motionEvent2.getX() > 100 && Math.abs(v) > 50) {
-                    sendMessage("L");
+                    sendMessage(MSG_LEFT);
                 }else if(motionEvent2.getX() - motionEvent.getX() > 100 && Math.abs(v) > 50){
-                    sendMessage("R");
+                    sendMessage(MSG_RIGHT);
                 }else if(motionEvent2.getY() - motionEvent.getY() > 100 && Math.abs(v) > 50){
-                    sendMessage("B");
+                    sendMessage(MSG_DOWN);
                 }else if(motionEvent.getY() - motionEvent2.getY() > 100 && Math.abs(v) > 50){
-                    sendMessage("A");
+                    sendMessage(MSG_UP);
                 }
             }
             return super.onFling(motionEvent,motionEvent2,v,v2);
@@ -357,13 +382,13 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
             cnt=(cnt+1)%5;
             if(cnt==0){
                 if(x<-4){
-                    sendMessage("R");
+                    sendMessage(MSG_RIGHT);
                 }else if(x>4){
-                    sendMessage("L");
+                    sendMessage(MSG_LEFT);
                 }else if(y<-4){
-                    sendMessage("A");
+                    sendMessage(MSG_UP);
                 }else if(y>4){
-                    sendMessage("B");
+                    sendMessage(MSG_DOWN);
                 }
             }
 
