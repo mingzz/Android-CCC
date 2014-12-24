@@ -252,7 +252,7 @@ public class BluetoothUtil {
                 intent.setAction(ACTION_WIFI_CLIENT_OPEN);
                 context.sendBroadcast(intent);
             } catch (IOException e) {
-                e.printStackTrace();
+                e.printStackTrace();Log.i("ljjBluetooth",e.getMessage());
                 Intent intent = new Intent();
                 intent.setAction(ACTION_WIFI_CLIENT_ERROR);
                 context.sendBroadcast(intent);

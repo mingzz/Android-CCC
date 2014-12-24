@@ -109,9 +109,12 @@ public class LoginActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b){
+                    switchServer.setText("请输入地址和端口");
                     layoutWifiConfirm.setVisibility(View.VISIBLE);
                 }else{
-                    finishSever();//关闭服务器
+                    bluetoothUtil.finishServer();
+                    switchServer.setText("点击开启wifi服务端");
+                    progressBar.setVisibility(View.GONE);
                     layoutWifiConfirm.setVisibility(View.GONE);
                 }
             }
@@ -120,9 +123,13 @@ public class LoginActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b){
-                    startClientWifi();
+                    switchClientWifi.setText("正在开启wifi客户端。。。");
+                    progressBar.setVisibility(View.VISIBLE);
+                    bluetoothUtil.connectWifiClient();
                 }else {
-                    finishClientWifi();
+                    bluetoothUtil.finishWifiClient();
+                    progressBar.setVisibility(View.GONE);
+                    switchClientWifi.setText("点击开启wifi客户端");
                 }
             }
         });
@@ -130,11 +137,15 @@ public class LoginActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b){
+                    switchClient.setText("正在搜寻服务端。。。");
+                    progressBar.setVisibility(View.VISIBLE);
                     layoutConnectBluetooth.setVisibility(View.VISIBLE);
                     startClient();//开启客户端
                 }else{
                     layoutConnectBluetooth.setVisibility(View.GONE);
-                    finishClient();//关闭客户端
+                    bluetoothUtil.finishClient();
+                    progressBar.setVisibility(View.GONE);
+                    switchClient.setText("点击开启客户端");
                 }
             }
         });
@@ -142,9 +153,11 @@ public class LoginActivity extends Activity {
         buttonWifiConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                switchServer.setText("正在开启wifi服务端。。。");
+                progressBar.setVisibility(View.VISIBLE);
                 DataUtil.setSpfString(LoginActivity.this,DataUtil.SPF_WIFI_NAME,DataUtil.SPF_WIFI_ADDRESS,editTextAddress.getText().toString());
                 DataUtil.setSpfString(LoginActivity.this,DataUtil.SPF_WIFI_NAME,DataUtil.SPF_WIFI_PORT,editTextPort.getText().toString());
-                startServer();//开启服务器
+                bluetoothUtil.startServer();
             }
         });
 
@@ -271,30 +284,7 @@ public class LoginActivity extends Activity {
         });
     }
 
-    private void startServer(){
-        switchServer.setText("正在开启wifi服务端。。。");
-        bluetoothUtil.startServer();
-    }
-
-    private void finishSever(){
-        switchServer.setText("点击开启wifi服务端");
-        bluetoothUtil.finishServer();
-    }
-
-    private void startClientWifi(){
-        switchClientWifi.setText("正在开启wifi客户端。。。");
-        bluetoothUtil.connectWifiClient();
-    }
-
-    private void finishClientWifi(){
-        switchServer.setText("点击开启wifi客户端");
-        bluetoothUtil.finishWifiClient();
-    }
-
     private void startClient(){
-        switchClient.setText("正在搜寻服务端。。。");
-        progressBar.setVisibility(View.VISIBLE);
-
         deviceMap = new HashMap<String, BluetoothDevice>();
         deviceNames = new ArrayList<String>();
         arrayAdapterDevices = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,deviceNames);
@@ -302,9 +292,4 @@ public class LoginActivity extends Activity {
         bluetoothUtil.startSearch();
     }
 
-    private void finishClient(){
-        switchClient.setText("点击开启客户端");
-
-        bluetoothUtil.finishClient();
-    }
 }
