@@ -87,7 +87,7 @@ public class LoginActivity extends Activity {
 
         initBluetooth();
 
-        initP2p();
+        //initP2p();
     }
 
     private void initView(){
@@ -186,10 +186,10 @@ public class LoginActivity extends Activity {
                 String username = editTextUserName.getText().toString();
                 String password = editTextPassword.getText().toString();
 
-                if(username.equals("")||password.equals("")){
+                /*if(username.equals("")||password.equals("")){
                     Toast.makeText(LoginActivity.this,"用户名或密码输入不完全",Toast.LENGTH_SHORT).show();
                     return;
-                }
+                }*/
 
                 //if(bluetoothUtil.CLIENT_CONNECT || bluetoothUtil.SERVER_OPEN){
                     //作为客户端或者服务器连接上了
@@ -231,13 +231,13 @@ public class LoginActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(wifiBroadcastReceiver, intentFilterWifi);Log.i(TAG,"2");
+        //registerReceiver(wifiBroadcastReceiver, intentFilterWifi);Log.i(TAG,"2");
     }
     /* unregister the broadcast receiver */
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(wifiBroadcastReceiver);
+        //unregisterReceiver(wifiBroadcastReceiver);
     }
 
     /**

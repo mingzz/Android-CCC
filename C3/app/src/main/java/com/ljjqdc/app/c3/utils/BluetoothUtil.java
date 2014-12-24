@@ -3,22 +3,17 @@ package com.ljjqdc.app.c3.utils;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Message;
 import android.util.Log;
-import android.widget.EditText;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -312,6 +307,7 @@ public class BluetoothUtil {
         try {
             OutputStream outputStream = bluetoothSocket.getOutputStream();
             outputStream.write(outputMessage.getBytes());
+            outputStream.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -364,7 +360,7 @@ public class BluetoothUtil {
                         //输出s
                         Intent intent = new Intent();
                         intent.setAction(ACTION_RECEIVE_MESSAGE);
-                        intent.putExtra("receiveMsg","收到："+s);
+                        intent.putExtra("receiveMsg",s);
                         context.sendBroadcast(intent);
                     }
                 } catch (IOException e) {

@@ -24,28 +24,28 @@
 
             <LinearLayout
                 android:id="@+id/frame_local_area"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="bottom|right"
                 android:orientation="vertical"
                 android:padding="3dip" >
-                <ImageButton
-                    android:id="@+id/ImgSwichVideo"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginBottom="30dp"
-                    android:layout_gravity="bottom|right"
-                    android:background="@drawable/btn_cab_done_ljjtest"
-                    android:src="@drawable/button_camera"/>
 
                 <SurfaceView
                     android:id="@+id/surface_local"
                     android:visibility="gone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center" />
+                    android:layout_width="match_parent"
+                    android:layout_height="0dip"
+                    android:layout_gravity="center"
+                    android:layout_weight="1" />
             </LinearLayout>
         </FrameLayout>
+        <ImageButton
+            android:id="@+id/ImgSwichVideo"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical|right"
+            android:background="@drawable/btn_cab_done_ljjtest"
+            android:src="@drawable/button_camera"/>
     </FrameLayout>
 
     <!--划屏控制层-->
@@ -143,11 +143,11 @@
             android:orientation="horizontal"
             android:layout_above="@id/layoutButton2">
             <ImageButton
-                android:id="@+id/buttonRotateLeft"
+                android:id="@+id/buttonLeftForward"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_margin="6dp"
-                android:src="@drawable/button_rotate_left"
+                android:src="@drawable/button_left_forward"
                 android:background="@drawable/btn_cab_done_ljjtest"/>
             <ImageButton
                 android:id="@+id/buttonUp"
@@ -157,11 +157,11 @@
                 android:src="@drawable/button_up"
                 android:background="@drawable/btn_cab_done_ljjtest"/>
             <ImageButton
-                android:id="@+id/buttonRotateRight"
+                android:id="@+id/buttonRightForward"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_margin="6dp"
-                android:src="@drawable/button_rotate_right"
+                android:src="@drawable/button_right_forward"
                 android:background="@drawable/btn_cab_done_ljjtest"/>
         </LinearLayout>
 

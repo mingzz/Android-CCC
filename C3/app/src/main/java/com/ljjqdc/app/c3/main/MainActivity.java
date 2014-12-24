@@ -46,25 +46,20 @@ import com.ljjqdc.app.c3.utils.BluetoothUtil;
 import com.ljjqdc.app.c3.utils.DataUtil;
 import com.ljjqdc.app.c3.utils.DemoPath;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
 
 public class MainActivity extends Activity implements AnyChatBaseEvent {
 
     //发送的数据
     private final String MSG_UP = "w";
-    private final String MSG_DOWN = "s";
-    private final String MSG_LEFT = "q";
-    private final String MSG_RIGHT = "e";
-    private final String MSG_UP2 = "zuoji1";
-    private final String MSG_DOWN2 = "zuoji2";
-    private final String MSG_ROTATE_LEFT = "";
-    private final String MSG_ROTATE_RIGHT = "";
+    private final String MSG_DOWN = "x";
+    private final String MSG_LEFT = "a";
+    private final String MSG_RIGHT = "d";
+    private final String MSG_UP2 = "z";
+    private final String MSG_DOWN2 = "c";
+    private final String MSG_LEFT_FORWARD = "q";
+    private final String MSG_RIGHT_FORWARD = "e";
     private final String MSG_STOP = "s";
 
     private final String TAG = "ljjblue";
@@ -103,8 +98,8 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
     private ImageButton buttonRight;
     private ImageButton buttonUp2;
     private ImageButton buttonDown2;
-    private ImageButton buttonRotateLeft;
-    private ImageButton buttonRotateRight;
+    private ImageButton buttonLeftForward;
+    private ImageButton buttonRightForward;
     private ImageButton buttonStop;
 
     //划屏控制
@@ -291,8 +286,8 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         buttonRight = (ImageButton)findViewById(R.id.buttonRight);
         buttonUp2 = (ImageButton)findViewById(R.id.buttonUp2);
         buttonDown2 = (ImageButton)findViewById(R.id.buttonDown2);
-        buttonRotateLeft = (ImageButton)findViewById(R.id.buttonRotateLeft);
-        buttonRotateRight = (ImageButton)findViewById(R.id.buttonRotateRight);
+        buttonLeftForward = (ImageButton)findViewById(R.id.buttonLeftForward);
+        buttonRightForward = (ImageButton)findViewById(R.id.buttonRightForward);
         buttonStop = (ImageButton)findViewById(R.id.buttonStop);
 
         layout2.setVisibility(View.GONE);
@@ -332,16 +327,16 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
                 sendMessage(MSG_DOWN2);
             }
         });
-        buttonRotateLeft.setOnClickListener(new View.OnClickListener() {
+        buttonLeftForward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendMessage(MSG_ROTATE_LEFT);
+                sendMessage(MSG_LEFT_FORWARD);
             }
         });
-        buttonRotateRight.setOnClickListener(new View.OnClickListener() {
+        buttonRightForward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendMessage(MSG_ROTATE_RIGHT);
+                sendMessage(MSG_RIGHT_FORWARD);
             }
         });
         buttonStop.setOnClickListener(new View.OnClickListener() {
@@ -403,7 +398,9 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
     }
 
     private void cancelGravity(){
-        sensorManager.unregisterListener(sensorEventListener);
+        if(sensorManager!=null&&sensorEventListener!=null){
+            sensorManager.unregisterListener(sensorEventListener);
+        }
     }
 
     private int cnt=0;
@@ -670,6 +667,12 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         anyChatSDK.Release();
         isAnyChatOnline = false;
         isAnyChatChatting = false;
+
+        //蓝牙的流关掉
+        bluetoothUtil.finishWifiClient();
+        bluetoothUtil.finishClient();
+        bluetoothUtil.finishServer();
+
         super.onDestroy();
     }
 
