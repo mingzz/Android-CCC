@@ -7,6 +7,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.wifi.p2p.WifiP2pConfig;
+import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -40,6 +44,8 @@ import java.util.Set;
 
 public class LoginActivity extends Activity {
 
+    private String TAG = "ljjblue";
+
     //bluetooth
     private Switch switchServer;
     private LinearLayout layoutWifiConfirm;
@@ -58,6 +64,12 @@ public class LoginActivity extends Activity {
     private Map<String,BluetoothDevice> deviceMap = new HashMap<String, BluetoothDevice>();
     private List<String> deviceNames = new ArrayList<String>();
 
+    //p2p
+    private WifiP2pManager wifiP2pManager;
+    private WifiP2pManager.Channel channel;
+    private BroadcastReceiver wifiBroadcastReceiver;
+    private IntentFilter intentFilterWifi;
+
     //login
     private LinearLayout layoutLogin;
     private EditText editTextUserName;
@@ -74,6 +86,8 @@ public class LoginActivity extends Activity {
         initListener();
 
         initBluetooth();
+
+        initP2p();
     }
 
     private void initView(){
@@ -209,6 +223,25 @@ public class LoginActivity extends Activity {
         });
     }
 
+    @Override
+    public void onDestroy(){
+        unregisterReceiver(bluetoothReceiver);
+        super.onDestroy();
+    }
+
+    /* register the broadcast receiver with the intent values to be matched */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(wifiBroadcastReceiver, intentFilterWifi);Log.i(TAG,"2");
+    }
+    /* unregister the broadcast receiver */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(wifiBroadcastReceiver);
+    }
+
     /**
      * 蓝牙扫描广播
      */
@@ -253,12 +286,6 @@ public class LoginActivity extends Activity {
         }
     };
 
-    @Override
-    public void onDestroy(){
-        unregisterReceiver(bluetoothReceiver);
-        super.onDestroy();
-    }
-
     private void initBluetooth(){
         BluetoothUtil.init(this);
         bluetoothUtil = BluetoothUtil.getInstance();
@@ -292,4 +319,91 @@ public class LoginActivity extends Activity {
         bluetoothUtil.startSearch();
     }
 
+
+    /**
+     * p2p连接：
+     * A BroadcastReceiver that notifies of important Wi-Fi p2p events.
+     */
+    private class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
+
+        private WifiP2pManager mManager;
+        private WifiP2pManager.Channel mChannel;
+
+        public WiFiDirectBroadcastReceiver(WifiP2pManager manager, WifiP2pManager.Channel channel) {
+            super();
+            this.mManager = manager;
+            this.mChannel = channel;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {Log.i(TAG,"WIFI_P2P_STATE_CHANGED_ACTION");
+                // Check to see if Wi-Fi is enabled and notify appropriate activity
+                int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
+                if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {Log.i(TAG,"WIFI_P2P_STATE_ENABLED");
+                    // Wifi P2P is enabled
+                    wifiP2pManager.discoverPeers(channel,new WifiP2pManager.ActionListener() {
+                        @Override
+                        public void onSuccess() {
+                            Log.i(TAG,"discoverPeers success");
+                        }
+
+                        @Override
+                        public void onFailure(int i) {
+                            Log.i(TAG,"discoverPeers failure");
+                        }
+                    });
+                } else {Log.i(TAG,"! WIFI_P2P_STATE_ENABLED");
+                    // Wi-Fi P2P is not enabled
+                }
+            } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {Log.i(TAG,"WIFI_P2P_PEERS_CHANGED_ACTION");
+                // Call WifiP2pManager.requestPeers() to get a list of current peers
+                if (mManager != null) {
+                    mManager.requestPeers(mChannel, new WifiP2pManager.PeerListListener() {
+                        @Override
+                        public void onPeersAvailable(WifiP2pDeviceList wifiP2pDeviceList) {
+                            while (wifiP2pDeviceList.getDeviceList().iterator().hasNext()){
+                                Log.i(TAG,"wifiP2pDeviceList:"+wifiP2pDeviceList.getDeviceList().iterator().next().deviceAddress+":"
+                                +wifiP2pDeviceList.getDeviceList().iterator().next().deviceName);
+                            }
+                            //obtain a peer from the WifiP2pDeviceList
+                            WifiP2pDevice device = wifiP2pDeviceList.getDeviceList().iterator().next();
+                            WifiP2pConfig config = new WifiP2pConfig();
+                            config.deviceAddress = device.deviceAddress;
+                            mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
+
+                                @Override
+                                public void onSuccess() {
+                                    //success logic
+                                }
+
+                                @Override
+                                public void onFailure(int reason) {
+                                    //failure logic
+                                }
+                            });
+                        }
+                    });
+                }
+            } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {Log.i(TAG,"WIFI_P2P_CONNECTION_CHANGED_ACTION");
+                // Respond to new connection or disconnections
+            } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {Log.i(TAG,"WIFI_P2P_THIS_DEVICE_CHANGED_ACTION");
+                // Respond to this device's wifi state changing
+            }
+        }
+    }
+
+    private void initP2p(){
+        wifiP2pManager = (WifiP2pManager)getSystemService(Context.WIFI_P2P_SERVICE);
+        channel = wifiP2pManager.initialize(this,getMainLooper(),null);
+        wifiBroadcastReceiver = new WiFiDirectBroadcastReceiver(wifiP2pManager,channel);
+
+        intentFilterWifi = new IntentFilter();
+        intentFilterWifi.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+        intentFilterWifi.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
+        intentFilterWifi.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+        intentFilterWifi.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);Log.i(TAG,"1");
+    }
 }
