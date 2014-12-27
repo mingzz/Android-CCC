@@ -147,7 +147,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_margin="6dp"
-                android:src="@drawable/button_left_forward"
+                android:src="@drawable/button_rotate_left"
                 android:background="@drawable/btn_cab_done_ljjtest"/>
             <ImageButton
                 android:id="@+id/buttonUp"
@@ -161,7 +161,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_margin="6dp"
-                android:src="@drawable/button_right_forward"
+                android:src="@drawable/button_rotate_right"
                 android:background="@drawable/btn_cab_done_ljjtest"/>
         </LinearLayout>
 

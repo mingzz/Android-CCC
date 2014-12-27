@@ -146,7 +146,12 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         public void onReceive(Context context, Intent intent) {
             String s = intent.getStringExtra("receiveMsg");
             textViewLogs.setText("收到手机消息："+s);
-            bluetoothUtil.sendMessageViaBluetooth(s);
+            final String ss = s;
+            new Thread(){
+                public void run(){
+                    bluetoothUtil.sendMessageViaBluetooth(ss);
+                }
+            }.start();
             Toast.makeText(MainActivity.this,"收到手机消息："+s+"并发送成功",Toast.LENGTH_SHORT).show();
         }
     };
@@ -156,13 +161,13 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
      */
     private void sendMessage(String s){
         textViewLogs.setText(s);
-        //bluetoothUtil.sendMessageViaWifi(s);
-        final String ss = s;
+        bluetoothUtil.sendMessageViaWifi(s);
+        /*final String ss = s;
         new Thread(){
             public void run(){
                 bluetoothUtil.sendMessageViaBluetooth(ss);
             }
-        }.start();
+        }.start();*/
     }
 
     /**
