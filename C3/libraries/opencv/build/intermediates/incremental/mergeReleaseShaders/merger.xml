@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="F:\File\Course\Third_year\3C\Android-CCC\C3\libraries\opencv\src\main\shaders"/></dataSet><dataSet config="release"><source path="F:\File\Course\Third_year\3C\Android-CCC\C3\libraries\opencv\src\release\shaders"/></dataSet></merger>
+<merger version="3"><dataSet config="main"><source path="C:\Users\Yusn\Desktop\3ccv\Android-CCC\C3\libraries\opencv\src\main\shaders"/></dataSet><dataSet config="release"><source path="C:\Users\Yusn\Desktop\3ccv\Android-CCC\C3\libraries\opencv\src\release\shaders"/></dataSet></merger>

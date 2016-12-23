@@ -47,7 +47,11 @@ import com.ljjqdc.app.c3.utils.DataUtil;
 import com.ljjqdc.app.c3.utils.DemoPath;
 
 import org.opencv.android.OpenCVLoader;
+import org.opencv.objdetect.CascadeClassifier;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,6 +117,9 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
     //重力感应
     private SensorManager sensorManager;
 
+    //facedetect
+    public static CascadeClassifier faceDetector;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,8 +136,39 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         initGestureController();
 
         initVoiceRecognizer();
-
+        initializeOpenCVDependencies();
         textViewLogs.setText("初始化完毕~");
+    }
+
+    private void initializeOpenCVDependencies() {
+
+
+        try {
+            // Copy the resource into a temp file so OpenCV can load it
+            InputStream is = getResources().openRawResource(R.raw.lbpcascade_frontalface);
+            File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
+            File mCascadeFile = new File(cascadeDir, "lbpcascade_frontalface.xml");
+            FileOutputStream os = new FileOutputStream(mCascadeFile);
+
+
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+            is.close();
+            os.close();
+
+
+            // Load the cascade classifier
+            faceDetector  = new CascadeClassifier(mCascadeFile.getAbsolutePath());
+        } catch (Exception e) {
+            Log.e("OpenCVActivity", "Error loading cascade", e);
+        }
+
+
+        // And we are ready to go
+        //openCvCameraView.enableView();
     }
 
     /**

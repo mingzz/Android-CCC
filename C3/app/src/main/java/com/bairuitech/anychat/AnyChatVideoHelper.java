@@ -13,9 +13,16 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 
+import com.ljjqdc.app.c3.main.MainActivity;
+
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfRect;
+//import org.opencv.core.Rect;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 
@@ -196,21 +203,47 @@ class VideoRenderer implements Callback {
 		bitmap.copyPixelsFromBuffer(byteBuffer);
 		Mat mat_bmp = new Mat(bitmap.getHeight() , bitmap.getWidth(), CvType.CV_8UC4);
 		Utils.bitmapToMat(bitmap, mat_bmp);
-		//将彩色Mat对象转成单通道的灰度Mat.
-		Mat mat_gray = new Mat(bitmap.getHeight() , bitmap.getWidth(), CvType.CV_8UC4);
-		Imgproc.cvtColor(mat_bmp, mat_gray, Imgproc.COLOR_BGRA2GRAY, 1);
+//		//将彩色Mat对象转成单通道的灰度Mat.
+//		Mat mat_gray = new Mat(bitmap.getHeight() , bitmap.getWidth(), CvType.CV_8UC4);
+//		Imgproc.cvtColor(mat_bmp, mat_gray, Imgproc.COLOR_BGRA2GRAY, 1);
+//
+//		//由于最后将mat转成ARGB_8888型的Bitmap，输入必须是4通道的.
+//		//因而这里要将单通道转成4通道
+////		Mat gray4 = new Mat(mat_gray.rows(), mat_gray.cols(), CvType.CV_8UC4);
+////		Imgproc.cvtColor(mat_gray, gray4, Imgproc.COLOR_GRAY2BGRA, 4);
+//		//将mat对象转成Bitmap显示.
+//		Bitmap bmp_gray = null;
+//		bmp_gray = Bitmap.createBitmap(mat_gray.cols(), mat_gray.rows(), Bitmap.Config.RGB_565);
+//		Utils.matToBitmap(mat_gray, bmp_gray);
+//		//bitmap=bmp_gray;
+//		Log.i("getbyte", String.valueOf(bitmap.getByteCount()));
+//		bitmap = bmp_gray.copy(bmp_gray.getConfig(), true);
+//		Log.i("getbyte", String.valueOf(bitmap.getByteCount()));
+//Log.i("bitmap2:",String.valueOf(bitmap.getWidth()));
 
-		//由于最后将mat转成ARGB_8888型的Bitmap，输入必须是4通道的.
-		//因而这里要将单通道转成4通道
-		Mat gray4 = new Mat(mat_gray.rows(), mat_gray.cols(), CvType.CV_8UC4);
-		Imgproc.cvtColor(mat_gray, gray4, Imgproc.COLOR_GRAY2BGRA, 4);
-		//将mat对象转成Bitmap显示.
-		Bitmap bmp_gray = null;
-		bmp_gray = Bitmap.createBitmap(gray4.cols(), gray4.rows(), Bitmap.Config.ARGB_8888);
-		Utils.matToBitmap(gray4, bmp_gray);
-		//bitmap=bmp_gray;
-		//bitmap = bmp_gray.copy(bmp_gray.getConfig(), true);
-Log.i("bitmap2:",String.valueOf(bitmap.getWidth()));
+		MatOfRect faceDetections = new MatOfRect();
+		MainActivity.faceDetector.detectMultiScale(mat_bmp, faceDetections);
+
+		Log.i(String.format("Detected %s faces",
+				faceDetections.toArray().length), "");
+
+		int facenum = 0;
+		// Draw a bounding box around each face.
+		org.opencv.core.Rect[] facesArray = faceDetections.toArray();
+		for (org.opencv.core.Rect rect : faceDetections.toArray()) {
+			Imgproc.rectangle(
+					mat_bmp,
+					new Point(rect.x, rect.y),
+					new Point(rect.x + rect.width, rect.y + rect.height),
+					new Scalar(255, 0, 0));
+			++facenum;
+		}
+
+		// Save the visualized detection.
+		// Bitmap bmpdone = Bitmap.createBitmap(bmptest.getWidth(),
+		// bmptest.getHeight(), Config.RGB_565);
+		Utils.matToBitmap(mat_bmp, bitmap);
+
 		Canvas canvas = surfaceHolder.lockCanvas();
 		if (canvas != null) {
 			
