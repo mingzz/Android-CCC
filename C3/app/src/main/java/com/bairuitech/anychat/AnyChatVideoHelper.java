@@ -13,6 +13,11 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 
+import org.opencv.android.Utils;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+
 
 //AnyChat 视频显示包装类，实现Java层面的视频播放
 public class AnyChatVideoHelper {
@@ -189,6 +194,23 @@ class VideoRenderer implements Callback {
         ByteBuffer byteBuffer = ByteBuffer.wrap(mPixel); // 将 byte 数组包装到缓冲区中
 		byteBuffer.rewind();
 		bitmap.copyPixelsFromBuffer(byteBuffer);
+		Mat mat_bmp = new Mat(bitmap.getHeight() , bitmap.getWidth(), CvType.CV_8UC4);
+		Utils.bitmapToMat(bitmap, mat_bmp);
+		//将彩色Mat对象转成单通道的灰度Mat.
+		Mat mat_gray = new Mat(bitmap.getHeight() , bitmap.getWidth(), CvType.CV_8UC4);
+		Imgproc.cvtColor(mat_bmp, mat_gray, Imgproc.COLOR_BGRA2GRAY, 1);
+
+		//由于最后将mat转成ARGB_8888型的Bitmap，输入必须是4通道的.
+		//因而这里要将单通道转成4通道
+		Mat gray4 = new Mat(mat_gray.rows(), mat_gray.cols(), CvType.CV_8UC4);
+		Imgproc.cvtColor(mat_gray, gray4, Imgproc.COLOR_GRAY2BGRA, 4);
+		//将mat对象转成Bitmap显示.
+		Bitmap bmp_gray = null;
+		bmp_gray = Bitmap.createBitmap(gray4.cols(), gray4.rows(), Bitmap.Config.ARGB_8888);
+		Utils.matToBitmap(gray4, bmp_gray);
+		//bitmap=bmp_gray;
+		//bitmap = bmp_gray.copy(bmp_gray.getConfig(), true);
+Log.i("bitmap2:",String.valueOf(bitmap.getWidth()));
 		Canvas canvas = surfaceHolder.lockCanvas();
 		if (canvas != null) {
 			

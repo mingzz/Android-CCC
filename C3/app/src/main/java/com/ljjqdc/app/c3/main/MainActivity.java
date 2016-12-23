@@ -46,6 +46,8 @@ import com.ljjqdc.app.c3.utils.BluetoothUtil;
 import com.ljjqdc.app.c3.utils.DataUtil;
 import com.ljjqdc.app.c3.utils.DemoPath;
 
+import org.opencv.android.OpenCVLoader;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,7 +119,7 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         setContentView(R.layout.activity_main);
 
         initView();
-
+        OpenCVLoader.initDebug();
         initBlueTooth();
 
         initAnyChatView();
