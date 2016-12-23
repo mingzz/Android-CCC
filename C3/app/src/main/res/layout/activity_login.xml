@@ -23,9 +23,10 @@
                 android:textOff="OFF"
                 android:textOn="ON"/>
             <LinearLayout
-                android:id="@+id/layoutWifiConfirm"
+                android:id="@+id/layoutWifiConfirm_2"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:weightSum="1">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -33,22 +34,30 @@
                     android:text="地址"/>
                 <EditText
                     android:id="@+id/editTextAddress"
-                    android:layout_width="160dp"
+                    android:layout_width="200dp"
                     android:layout_height="wrap_content"/>
+                <Button
+                    android:id="@+id/buttonWifiConfirm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ok" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/layoutWifiConfirm"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="1">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="端口"/>
                 <EditText
                     android:id="@+id/editTextPort"
-                    android:layout_width="70dp"
+                    android:layout_width="200dp"
                     android:layout_height="wrap_content"
-                    android:inputType="number" />
-                <Button
-                    android:id="@+id/buttonWifiConfirm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ok"/>
+                    android:inputType="number"
+                    android:layout_weight="0.93" />
+
             </LinearLayout>
             <Switch
                 android:id="@+id/switchClientWifi"
@@ -129,8 +138,6 @@
         </LinearLayout>
 
     </ScrollView>
-
-
 
 
 </LinearLayout>

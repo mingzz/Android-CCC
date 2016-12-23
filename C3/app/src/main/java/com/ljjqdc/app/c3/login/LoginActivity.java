@@ -49,6 +49,7 @@ public class LoginActivity extends Activity {
     //bluetooth
     private Switch switchServer;
     private LinearLayout layoutWifiConfirm;
+    private LinearLayout layoutWifiConfirm_2;
     private EditText editTextAddress;
     private EditText editTextPort;
     private Button buttonWifiConfirm;
@@ -93,6 +94,7 @@ public class LoginActivity extends Activity {
     private void initView(){
         switchServer = (Switch)findViewById(R.id.switchSever);
         layoutWifiConfirm = (LinearLayout)findViewById(R.id.layoutWifiConfirm);
+        layoutWifiConfirm_2 = (LinearLayout)findViewById(R.id.layoutWifiConfirm_2);
         editTextAddress = (EditText)findViewById(R.id.editTextAddress);
         editTextPort = (EditText)findViewById(R.id.editTextPort);
         buttonWifiConfirm = (Button)findViewById(R.id.buttonWifiConfirm);
@@ -114,6 +116,7 @@ public class LoginActivity extends Activity {
         editTextAddress.setText(DataUtil.getSpfString(this,DataUtil.SPF_WIFI_NAME,DataUtil.SPF_WIFI_ADDRESS,""));
         editTextPort.setText(DataUtil.getSpfString(this,DataUtil.SPF_WIFI_NAME,DataUtil.SPF_WIFI_PORT,""));
         layoutWifiConfirm.setVisibility(View.GONE);
+        layoutWifiConfirm_2.setVisibility(View.GONE);
         layoutConnectBluetooth.setVisibility(View.GONE);
         editTextUserName.setText(BluetoothAdapter.getDefaultAdapter().getName());
     }
@@ -125,11 +128,13 @@ public class LoginActivity extends Activity {
                 if(b){
                     switchServer.setText("请输入地址和端口");
                     layoutWifiConfirm.setVisibility(View.VISIBLE);
+                    layoutWifiConfirm_2.setVisibility(View.VISIBLE);
                 }else{
                     bluetoothUtil.finishServer();
                     switchServer.setText("点击开启wifi服务端");
                     progressBar.setVisibility(View.GONE);
                     layoutWifiConfirm.setVisibility(View.GONE);
+                    layoutWifiConfirm_2.setVisibility(View.GONE);
                 }
             }
         });
