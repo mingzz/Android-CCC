@@ -4,4 +4,4 @@
 /.idea/libraries
 .DS_Store
 /build
-/libraries
+C3/libraries/*
