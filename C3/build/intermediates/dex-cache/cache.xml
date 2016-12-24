@@ -1,3 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" />
+<items version="2" >
 
+    <item
+        jar="F:\File\Course\Third_year\3C\Android-CCC\C3\app\build\intermediates\exploded-aar\C3.libraries\opencv\unspecified\jars\classes.jar"
+        jumboMode="false"
+        revision="24.0.3"
+        sha1="5e0dbc3ab314913c449f10f4a08a3474b6ead47c">
+        <dex dex="F:\File\Course\Third_year\3C\Android-CCC\C3\app\build\intermediates\pre-dexed\debug\C3.libraries-opencv-unspecified_4d7e2f6e43ce35be014f61cb4167b469614e56c3.jar" />
+    </item>
+
+</items>

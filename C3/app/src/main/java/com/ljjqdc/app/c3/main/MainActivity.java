@@ -540,6 +540,8 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
             // 音频采集驱动设置
             AnyChatCoreSDK.SetSDKOptionInt(
                     AnyChatDefine.BRAC_SO_AUDIO_RECORDDRVCTRL, configEntity.audioRecordDriver);
+            // 设置本地视频编码的质量因子
+            AnyChatCoreSDK.SetSDKOptionInt(AnyChatDefine.BRAC_SO_LOCALVIDEO_QUALITYCTRL,6);
         }
 
         //登陆AnyChat
