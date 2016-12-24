@@ -211,7 +211,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:text="视频控制"/>
+            android:text="视频开关"/>
         <ImageButton
             android:id="@+id/btn_voice_recognizer"
             android:layout_width="48dp"
@@ -220,6 +220,33 @@
             android:layout_marginBottom="30dp"
             android:src="@drawable/button_voice"
             android:background="@drawable/btn_cab_done_ljjtest" />
+
+        <CheckBox
+            android:id="@+id/checkBoxFace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="人脸识别 |"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/checkBoxVideo"
+            android:layout_toStartOf="@+id/checkBoxVideo" />
+        <CheckBox
+            android:id="@+id/checkBoxGrey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="灰度显示"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/checkBoxFace"
+            android:layout_toStartOf="@+id/checkBoxFace" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="选择视频功能"
+            android:id="@+id/textViewChoose"
+            android:layout_alignBaseline="@+id/checkBoxGrey"
+            android:layout_alignBottom="@+id/checkBoxGrey"
+            android:layout_toLeftOf="@+id/checkBoxGrey"
+            android:layout_toStartOf="@+id/checkBoxGrey" />
     </RelativeLayout>
 
 </FrameLayout>

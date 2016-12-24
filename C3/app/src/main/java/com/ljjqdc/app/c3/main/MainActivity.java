@@ -79,7 +79,10 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
     private CheckBox checkBoxGesture;
     private CheckBox checkBoxVideo;
     private CheckBox checkBoxGravity;
+    private CheckBox checkBoxFace;
+    private CheckBox checkBoxGrey;
     private TextView textViewLogs;
+    private TextView textViewChoose;
 
     //AnyChat
     private AnyChatCoreSDK anyChatSDK;
@@ -119,6 +122,8 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
 
     //facedetect
     public static CascadeClassifier faceDetector;
+    public static boolean face_on=false;
+    public static boolean grey_on=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -219,7 +224,10 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
         checkBoxGesture = (CheckBox)findViewById(R.id.checkBoxGesture);
         checkBoxVideo = (CheckBox)findViewById(R.id.checkBoxVideo);
         checkBoxGravity = (CheckBox)findViewById(R.id.checkBoxGravity);
+        checkBoxFace = (CheckBox)findViewById(R.id.checkBoxFace);
+        checkBoxGrey = (CheckBox)findViewById(R.id.checkBoxGrey);
 
+        textViewChoose = (TextView)findViewById(R.id.textViewChoose);
         textViewLogs = (TextView)findViewById(R.id.textViewLogs);
 
         /**
@@ -280,6 +288,26 @@ public class MainActivity extends Activity implements AnyChatBaseEvent {
                     initGravity();
                 }else{
                     cancelGravity();
+                }
+            }
+        });
+        checkBoxFace.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b){
+                    face_on=true;
+                }else{
+                    face_on=false;
+                }
+            }
+        });
+        checkBoxGrey.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b){
+                    grey_on=true;
+                }else{
+                    grey_on=false;
                 }
             }
         });
