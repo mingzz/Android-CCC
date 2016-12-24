@@ -5,3 +5,5 @@
 .DS_Store
 /build
 C3/libraries/*
+C3/.idea/workspace.xml
+
